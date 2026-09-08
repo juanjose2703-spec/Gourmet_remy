@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insertar Menú | REMY 1.0</title>
+    <link rel="stylesheet" href="/estilos/normalize.css">
+    <link rel="stylesheet" href="/estilos/crear_menu.css">
+</head>
+<body id="cuerpo_modal_menu">
+    <header id="cabezote_modal">
+        <div class="contenido-header">
+            <svg id="btn_menu_movil_form" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor">
+                <path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"/>
+            </svg>
+            <h2 id="titulo_ppal">Insertar Menú</h2>
+            <a href="/platos_menu.html" id="btn_cerrar_modal" title="Cerrar">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor">
+                    <path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/>
+                </svg>
+            </a>
+        </div>
+    </header>
+
+    <main id="cont_ppal_menu">
+        <form id="forma_insertar_menu" class="contenedor-form">
+            <div class="contenedor-columnas-form">
+                <fieldset class="cont-grupo-campos bloque-gris">
+                    <div class="cont-campo-horizontal">
+                        <label for="plato_fuerte">Plato fuerte</label>
+                        <div class="cont-input-wrapper">
+                            <input type="text" id="plato_fuerte" name="plato_fuerte" class="campo-blanco campo-seleccion" readonly required placeholder="Escoger plato fuerte" data-titulo="Escoger plato fuerte">
+                        </div>
+                    </div>
+                    <div class="cont-campo-horizontal">
+                        <label for="entrada">Entrada</label>
+                        <div class="cont-input-wrapper">
+                            <input type="text" id="entrada" name="entrada" class="campo-blanco campo-seleccion" readonly required placeholder="Escoger entrada" data-titulo="Escoger entrada">
+                        </div>
+                    </div>
+                    <div class="cont-campo-horizontal">
+                        <label for="postre">Postre</label>
+                        <div class="cont-input-wrapper">
+                            <input type="text" id="postre" name="postre" class="campo-blanco campo-seleccion" readonly placeholder="Escoger postre" data-titulo="Escoger postre">
+                        </div>
+                    </div>
+                    <div class="cont-campo-horizontal">
+                        <label for="bebida">Bebida</label>
+                        <div class="cont-input-wrapper">
+                            <input type="text" id="bebida" name="bebida" class="campo-blanco campo-seleccion" readonly required placeholder="Escoger bebida" data-titulo="Escoger bebida">
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset class="cont-grupo-campos bloque-gris">
+                    <div class="cont-campo-horizontal">
+                        <label for="nombre_menu">Nombre</label>
+                        <input type="text" id="nombre_menu" name="nombre_menu" class="campo-blanco" required>
+                    </div>
+                    <div class="cont-campo-horizontal">
+                        <label for="desc_menu">Descripción</label>
+                        <input type="text" id="desc_menu" name="desc_menu" class="campo-blanco" required>
+                    </div>
+                    <div class="cont-campo-horizontal">
+                        <label for="precio_menu">Precio</label>
+                        <input type="number" id="precio_menu" name="precio_menu" inputmode="numeric" class="campo-blanco" min="0" required>
+                    </div>
+                    <div class="cont-campo-toggle">
+                        <label id="lbl_estado_menu" for="activo_menu" class="letra-gris-dark">Activo</label>
+                        <label class="switch">
+                            <input type="checkbox" id="activo_menu" name="activo_menu" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </fieldset>
+            </div>
+            <button type="submit" id="btn_crear_menu" class="btn-submit fondo-verde letra-blanca">Crear Menú</button>
+        </form>
+    </main>
+    <div id="superficie_modal" class="superficie-overlay oculto">
+        <div class="superficie-contenido">
+            
+            <div class="header-superficie">
+                <h2 id="titulo_superficie">Escoger plato fuerte</h2>
+                
+                <div class="cont-buscador">
+                    <input type="text" id="input_buscar_plato" placeholder="Buscar">
+                    <svg class="ico-buscar" viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" fill="none"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div id="lista_platos" class="lista-platos">
+            </div>
+
+        </div>
+    </div>
+
+    <script src="/comportamientos/crear_menu.js"></script>
+
+</body>
+</html>
