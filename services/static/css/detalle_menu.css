@@ -177,7 +177,7 @@ main#cuerpo_ppal_cont {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     margin-top: 12px;
 }
 
