@@ -498,7 +498,7 @@ input:checked + .slider:before {
     }
 
     .btn-submit {
-        margin: 11rem auto 1.5rem auto;
+        margin: 9rem auto 1.5rem auto;
         padding: 14px 48px;
         font-size: 1.1rem;
         width: clamp(220px, 40%, 300px);
