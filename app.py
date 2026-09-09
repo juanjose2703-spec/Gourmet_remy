@@ -2,7 +2,11 @@ from flask import Flask, render_template, request
 from flask_cors import CORS
 from buscarGeneral import buscarGeneral
 
-programa = Flask(__name__)
+programa = Flask(
+    __name__,
+    template_folder=os.path.join(BASE_DIR, 'services', 'templates'),
+    static_folder=os.path.join(BASE_DIR, 'services', 'static')
+)
 CORS(programa)
 
 @programa.route('/')
