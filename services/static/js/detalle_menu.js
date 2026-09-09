@@ -5,20 +5,16 @@ async function cargarDetalleMenu() {
     if (!id_menu) return;
 
     try {
-        // 1. Obtener datos desde la API de menús (puerto 5084)
+        // 1. Obtener datos desde la API de menús
         const responseMenu = await fetch(`http://localhost:5084/menus/${id_menu}`);
 
-        // VALIDACIÓN: Evita la falla de JSON si la API responde 404 o HTML de error
         if (!responseMenu.ok) {
-            console.error(`Error ${responseMenu.status}: No se encontró el menú '${id_menu}' en http://localhost:5084/menus/${id_menu}`);
+            console.error(`Error ${responseMenu.status}: No se encontró el menú '${id_menu}'`);
             return;
         }
 
         const menu = await responseMenu.json();
         if (!menu) return;
-
-        // Imprimir en consola la respuesta del backend para facilitar depuración de campos
-        console.log("Respuesta de la API menú:", menu);
 
         // 2. Poblar información básica en la interfaz
         const elNombre = document.querySelector('.tit-platillo');
@@ -32,32 +28,29 @@ async function cargarDetalleMenu() {
         if (elNombre) elNombre.textContent = menu.nombre ? menu.nombre.toUpperCase() : '';
         if (elPrecio) elPrecio.textContent = menu.precio ? `$${menu.precio}` : '$0';
         if (elDescripcion) elDescripcion.textContent = menu.descripcion || '';
-        if (elFecha) elFecha.textContent = menu.fecha_creacion ? menu.fecha_creacion.split('T')[0] : '';
+        if (elFecha) elFecha.textContent = menu.fecha_creacion ? menu.fecha_creacion.split('T')[0] : 'Sin fecha';
         
-        // Mapeo flexible para la cantidad de tiempos según la llave enviada por la API
-        if (elTiempos) {
-            elTiempos.textContent = menu.tiempos ?? menu.cant_tiempos ?? menu.numero_tiempos ?? menu.tiempos_menu ?? '0';
-        }
+        // Asignar el campo exacto del backend: tiempos_menu
+        if (elTiempos) elTiempos.textContent = menu.tiempos_menu ?? '0';
 
         if (btnEditar) btnEditar.href = `/modificar_menu/${id_menu}`;
 
         if (swtchEstado) {
-            swtchEstado.checked = menu.estado === 'Activo' || menu.activo === true;
+            swtchEstado.checked = menu.estado === 'Activo';
             swtchEstado.dispatchEvent(new Event('change'));
         }
 
-        // 3. Renderizar carrusel dinámico con resolución flexible de propiedades de imagen
+        // 3. Extraer las imágenes de los platos anidados (campo img_plato)
+        let imagenes = [];
+        if (Array.isArray(menu.platos) && menu.platos.length > 0) {
+            imagenes = menu.platos
+                .map(plato => plato.img_plato)
+                .filter(url => url && url.trim() !== '');
+        }
+
+        // 4. Renderizar carrusel de imágenes
         const tiraDiapositivas = document.getElementById('tira_imagenes');
         const contPuntos = document.getElementById('cont_puntos_carrusel');
-
-        let imagenes = [];
-        if (Array.isArray(menu.imagenes) && menu.imagenes.length > 0) {
-            imagenes = menu.imagenes;
-        } else if (Array.isArray(menu.fotos) && menu.fotos.length > 0) {
-            imagenes = menu.fotos;
-        } else if (menu.imagen_url || menu.img_menu || menu.foto_url) {
-            imagenes = [menu.imagen_url || menu.img_menu || menu.foto_url];
-        }
 
         if (tiraDiapositivas && contPuntos && imagenes.length > 0) {
             tiraDiapositivas.innerHTML = '';
@@ -73,10 +66,9 @@ async function cargarDetalleMenu() {
                     <button type="button" class="btn-punto ${idx === 0 ? 'activo' : ''}" data-slide="${idx}" aria-label="Foto ${idx + 1}"></button>
                 `;
             });
-        }
 
-        // 4. Inicializar carrusel tras la inserción DOM
-        inicializarCarrusel();
+            inicializarCarrusel();
+        }
 
     } catch (error) {
         console.error('Error al conectar con la API de menús:', error);
