@@ -558,3 +558,139 @@ input:checked + .slider:before {
         width: clamp(280px, 35%, 400px);
     }
 }
+
+/* Tarjetas del modal de selección de platos */
+.tarjeta-plato {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    background-color: var(--blanco);
+    border-radius: 14px;
+    padding: 10px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.tarjeta-plato:hover {
+    background-color: var(--azul-lite);
+}
+
+.tarjeta-plato img {
+    width: 70px;
+    height: 70px;
+    min-width: 70px;
+    border-radius: 10px;
+    object-fit: cover;
+    background-color: var(--gris);
+}
+
+.tarjeta-plato .info-plato {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    overflow: hidden;
+}
+
+.tarjeta-plato .info-plato h3 {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--negro);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tarjeta-plato .info-plato p {
+    font-size: 0.65rem;
+    color: var(--gris-dark);
+    margin: 0;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Media queries del modal */
+@media screen and (min-width: 700px) {
+    .superficie-contenido {
+        max-width: 520px;
+        max-height: 80vh;
+        padding: 28px 22px;
+    }
+
+    .tarjeta-plato img {
+        width: 80px;
+        height: 80px;
+        min-width: 80px;
+    }
+
+    .tarjeta-plato .info-plato h3 {
+        font-size: 0.9rem;
+    }
+
+    .tarjeta-plato .info-plato p {
+        font-size: 0.72rem;
+    }
+}
+
+@media screen and (min-width: 1366px) {
+    .superficie-contenido {
+        max-width: 580px;
+        max-height: 75vh;
+        padding: 30px 24px;
+    }
+
+    .tarjeta-plato {
+        padding: 12px;
+        border-radius: 16px;
+    }
+
+    .tarjeta-plato img {
+        width: 90px;
+        height: 90px;
+        min-width: 90px;
+        border-radius: 12px;
+    }
+
+    .tarjeta-plato .info-plato h3 {
+        font-size: 0.95rem;
+    }
+
+    .tarjeta-plato .info-plato p {
+        font-size: 0.75rem;
+    }
+}
+
+@media screen and (min-width: 1920px) {
+    .superficie-contenido {
+        max-width: 680px;
+        max-height: 75vh;
+        padding: 36px 28px;
+    }
+
+    .tarjeta-plato {
+        padding: 14px;
+        border-radius: 18px;
+        gap: 16px;
+    }
+
+    .tarjeta-plato img {
+        width: 110px;
+        height: 110px;
+        min-width: 110px;
+        border-radius: 14px;
+    }
+
+    .tarjeta-plato .info-plato h3 {
+        font-size: 1.1rem;
+    }
+
+    .tarjeta-plato .info-plato p {
+        font-size: 0.88rem;
+        -webkit-line-clamp: 3;
+    }
+}
