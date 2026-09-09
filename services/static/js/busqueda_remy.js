@@ -7,20 +7,20 @@ function inicializarBusquedaREMY() {
 
     if (!inputBusqueda) return;
 
+    const IMAGEN_DEFAULT = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=600&auto=format&fit=crop';
+
     async function buscar() {
         const q = inputBusqueda.value.trim();
-        if (q.length === 0) {
-            contenedor.innerHTML = '';
-            msjSinResultados.classList.add('oculto');
-            return;
-        }
 
         try {
-            const response = await fetch(`http://localhost:5000/buscar?q=${encodeURIComponent(q)}`);
+            // Petición al endpoint /buscar de Flask enviando el texto (vacío o con filtro)
+            const response = await fetch(`/buscar?q=${encodeURIComponent(q)}`);
+            if (!response.ok) throw new Error('Error al conectar con la base de datos');
+
             const data = await response.json();
             contenedor.innerHTML = '';
 
-            if (data.length === 0) {
+            if (!Array.isArray(data) || data.length === 0) {
                 msjSinResultados.classList.remove('oculto');
                 return;
             }
@@ -29,28 +29,33 @@ function inicializarBusquedaREMY() {
 
             data.forEach(item => {
                 const fecha = item.fecha_creacion ? item.fecha_creacion.split('T')[0] : 'Sin fecha';
+                const rutaImagen = item.img_registro ? item.img_registro : IMAGEN_DEFAULT;
 
                 contenedor.innerHTML += `
-                    <article class="tarjeta-plato"
-                        data-titulo="${item.nombre.toLowerCase()}"
-                        data-categoria="${item.tipo.toLowerCase()}">
-                        <figure class="foto-plato">
-                            <img src="${imagen}" alt="${item.nombre}" onerror="">
+                    <article class="tarjeta-item-resultado" 
+                             data-titulo="${item.nombre ? item.nombre.toLowerCase() : ''}" 
+                             data-categoria="${item.tipo ? item.tipo.toLowerCase() : ''}">
+                        <figure class="cont-img-tarjeta">
+                            <img src="${rutaImagen}" 
+                                 alt="${item.nombre}" 
+                                 class="img-tarjeta" 
+                                 onerror="this.src='${IMAGEN_DEFAULT}'">
                         </figure>
-                        <div class="info-plato">
-                            <h3 class="nombre-plato letra-azul-dark">${item.nombre.toUpperCase()}</h3>
-                            <p class="desc-plato">${item.descripcion}</p>
-                            <p class="meta-plato">Tipo: <strong>${item.tipo}</strong></p>
-                            <p class="meta-plato">Fecha creación: <strong>${fecha}</strong></p>
+                        <div class="cont-info-tarjeta">
+                            <h2 class="tit-item">${item.nombre ? item.nombre.toUpperCase() : 'SIN TÍTULO'}</h2>
+                            <p class="desc-item">${item.descripcion || 'Sin descripción disponible.'}</p>
+                            <p class="tag-categoria"><strong>-${item.tipo}</strong></p>
+                            <p class="fecha-creacion">Fecha creación: <time datetime="${fecha}">${fecha}</time></p>
                         </div>
                     </article>
                 `;
             });
         } catch (error) {
-            console.error('Error al buscar:', error);
+            console.error('Error durante la búsqueda:', error);
         }
     }
 
+    // Escuchadores de eventos
     inputBusqueda.addEventListener('input', buscar);
 
     btnEjecutar.addEventListener('click', (e) => {
@@ -65,9 +70,14 @@ function inicializarBusquedaREMY() {
         }
     });
 
-    btnFiltro.addEventListener('click', () => {
-        alert('Funcionalidad de filtro avanzado seleccionada.');
-    });
+    if (btnFiltro) {
+        btnFiltro.addEventListener('click', () => {
+            alert('Filtro activado.');
+        });
+    }
+
+    // Ejecución inicial automática para listar todo al ingresar
+    buscar();
 }
 
 if (document.readyState === 'loading') {

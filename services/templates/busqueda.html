@@ -29,7 +29,7 @@
             <h1 class="txt-cabezote">Busqueda</h1>
             
             <!-- Redirección mediante href hacia platos/menús -->
-            <a href="platos_menu.html" class="btn-transparente" id="btn_cerrar_modal" title="Cerrar" aria-label="Cerrar búsqueda">
+            <a href="{{ url_for('platos_menu') }}" class="btn-transparente" id="btn_cerrar_modal" title="Cerrar" aria-label="Cerrar búsqueda">
                 <svg class="ico-svg ico-cerrar-svg" viewBox="0 0 24 24" aria-hidden="true">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
                     <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -70,97 +70,7 @@
 
             <!-- GRILLA DE RESULTADOS DE BÚSQUEDA -->
             <section id="sec_lista_resultados" class="grilla-tarjetas" aria-label="Resultados de búsqueda">
-                
-                <!-- Tarjeta 1 -->
-                <article class="tarjeta-item-resultado" data-titulo="carne de cordero" data-categoria="menú">
-                    <figure class="cont-img-tarjeta">
-                        <img src="https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=600&auto=format&fit=crop" alt="Carne de Cordero" class="img-tarjeta">
-                    </figure>
-                    <div class="cont-info-tarjeta">
-                        <h2 class="tit-item">CARNE DE CORDERO</h2>
-                        <p class="desc-item">
-                            Platillo francés "Ratatouille" con capas de berenjena, calabacín y tomate sobre salsa de tomate y albahaca, acompañado por un...
-                        </p>
-                        <p class="tag-categoria"><strong>-Menú</strong></p>
-                        <p class="fecha-creacion">Fecha creación: <time datetime="2026-05-20">20/05/26</time></p>
-                    </div>
-                </article>
-
-                <!-- Tarjeta 2 -->
-                <article class="tarjeta-item-resultado" data-titulo="café" data-categoria="plato">
-                    <figure class="cont-img-tarjeta">
-                        <img src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?q=80&w=600&auto=format&fit=crop" alt="Café" class="img-tarjeta">
-                    </figure>
-                    <div class="cont-info-tarjeta">
-                        <h2 class="tit-item">CAFÉ</h2>
-                        <p class="desc-item">
-                            Bebida aromática y estimulante obtenida a partir de las semillas tostadas y molidas del fruto del cafeto
-                        </p>
-                        <p class="tag-categoria"><strong>-Plato</strong></p>
-                        <p class="fecha-creacion">Fecha creación: <time datetime="2026-05-20">20/05/26</time></p>
-                    </div>
-                </article>
-
-                <!-- Tarjeta 3 -->
-                <article class="tarjeta-item-resultado" data-titulo="camarón" data-categoria="ingrediente">
-                    <figure class="cont-img-tarjeta">
-                        <img src="https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?q=80&w=600&auto=format&fit=crop" alt="Camarón" class="img-tarjeta">
-                    </figure>
-                    <div class="cont-info-tarjeta">
-                        <h2 class="tit-item">CAMARÓN</h2>
-                        <p class="desc-item">
-                            El camarón es un crustáceo decápodo acuático, apreciado mundialmente por su sabor suave y textura firme.
-                        </p>
-                        <p class="tag-categoria"><strong>-Ingrediente</strong></p>
-                        <p class="fecha-creacion">Fecha creación: <time datetime="2026-05-20">20/05/26</time></p>
-                    </div>
-                </article>
-
-                <!-- Tarjeta 4 -->
-                <article class="tarjeta-item-resultado" data-titulo="empanada" data-categoria="entrada">
-                    <figure class="cont-img-tarjeta">
-                        <img src="https://images.unsplash.com/photo-1626700051175-6818013e1d4f?q=80&w=600&auto=format&fit=crop" alt="Empanada" class="img-tarjeta">
-                    </figure>
-                    <div class="cont-info-tarjeta">
-                        <h2 class="tit-item">BURRITO</h2>
-                        <p class="desc-item">
-                            Burrito colombiano lleno de sabor 
-                        </p>
-                        <p class="tag-categoria"><strong>-Entrada</strong></p>
-                        <p class="fecha-creacion">Fecha creación: <time datetime="2026-05-20">20/05/26</time></p>
-                    </div>
-                </article>
-
-                <!-- Tarjeta 5 -->
-                <article class="tarjeta-item-resultado" data-titulo="brawnie magico brownie" data-categoria="postre">
-                    <figure class="cont-img-tarjeta">
-                        <img src="https://images.unsplash.com/photo-1606313564200-e75d5e30476c?q=80&w=600&auto=format&fit=crop" alt="Brownie Mágico" class="img-tarjeta">
-                    </figure>
-                    <div class="cont-info-tarjeta">
-                        <h2 class="tit-item">BRAWNIE MAGICO</h2>
-                        <p class="desc-item">
-                            Es un pequeño bizcocho de chocolate de origen estadounidense, caracterizado por su interior denso, húmedo y su sabor intenso a chocolate...
-                        </p>
-                        <p class="tag-categoria"><strong>-Postre</strong></p>
-                        <p class="fecha-creacion">Fecha creación: <time datetime="2026-05-20">20/05/26</time></p>
-                    </div>
-                </article>
-
-                <!-- Tarjeta 6 -->
-                <article class="tarjeta-item-resultado" data-titulo="papaya" data-categoria="ingrediente">
-                    <figure class="cont-img-tarjeta">
-                        <img src="https://images.unsplash.com/photo-1617112848923-cc2234396a8d?q=80&w=600&auto=format&fit=crop" alt="Papaya" class="img-tarjeta">
-                    </figure>
-                    <div class="cont-info-tarjeta">
-                        <h2 class="tit-item">PAPAYA</h2>
-                        <p class="desc-item">
-                            Es una fruta tropical jugosa, de sabor dulce, pulpa blanda de color anaranjado y numerosas semillas negras, originaria de América Central...
-                        </p>
-                        <p class="tag-categoria"><strong>-Ingrediente</strong></p>
-                        <p class="fecha-creacion">Fecha creación: <time datetime="2026-05-20">20/05/26</time></p>
-                    </div>
-                </article>
-
+                <!-- Las tarjetas se generarán dinámicamente desde busqueda_remy.js -->
             </section>
 
             <!-- MENSAJE SI NO HAY RESULTADOS -->
