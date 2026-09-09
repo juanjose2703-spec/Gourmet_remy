@@ -138,7 +138,7 @@
                     <path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"/>
                 </svg>
                 <h2 id="titulo_vista_ppal">Platos y Menús</h2>
-                <a href="busqueda.html" id="btn_cerrar_vista" title="Buscar">
+                <a href="{{ url_for('busqueda') }}" id="btn_cerrar_vista" title="Buscar">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor">
                         <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/>
                     </svg>
@@ -156,7 +156,7 @@
                     <button type="button" id="pesta_menu" class="btn-pestana">Menú</button>
                 </div>
                 <div id="cont_acciones_pestanas">
-                    <a href="/busqueda" id="btn_buscar_pesta" class="btn-ico-nav" title="Buscar">
+                    <a href="{{ url_for('busqueda') }}" id="btn_buscar_pesta" class="btn-ico-nav" title="Buscar">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor">
                             <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/>
                         </svg>
@@ -171,7 +171,50 @@
                     </div>
                     <div class="cont-scroll-interno">
                         <article class="lista-tarjetas-grid">
-                            
+                            <a href="/detalle_plato.html" class="tarjeta-plato">
+                                <figure class="foto-plato">
+                                    <img src="imagenes/rata.jfif" alt="Ratatouille">
+                                </figure>
+                                <div class="info-plato">
+                                    <h3 class="nombre-plato letra-azul-dark">RATATOUILLE</h3>
+                                    <p class="desc-plato">Platillo francés "Ratatouille" con capas de berenjena, calabacín y tomate sobre salsa de tomate y albahaca, acompañado por un caldo...</p>
+                                    <p class="meta-plato">Categoría: <strong>Plato Fuerte</strong></p>
+                                    <p class="meta-plato">Fecha creación: <strong>20/05/26</strong></p>
+                                </div>
+                            </a>
+                            <a href="/plato/ratatouille-2" class="tarjeta-plato">
+                                <figure class="foto-plato">
+                                    <img src="imagenes/rata.jfif" alt="Ratatouille">
+                                </figure>
+                                <div class="info-plato">
+                                    <h3 class="nombre-plato letra-azul-dark">RATATOUILLE</h3>
+                                    <p class="desc-plato">Platillo francés "Ratatouille" con capas de berenjena, calabacín y tomate sobre salsa de tomate y albahaca, acompañado por un caldo...</p>
+                                    <p class="meta-plato">Categoría: <strong>Plato Fuerte</strong></p>
+                                    <p class="meta-plato">Fecha creación: <strong>20/05/26</strong></p>
+                                </div>
+                            </a>
+                            <a href="/plato/empanada" class="tarjeta-plato">
+                                <figure class="foto-plato">
+                                    <img src="imagenes/empanada.jfif" alt="Empanada">
+                                </figure>
+                                <div class="info-plato">
+                                    <h3 class="nombre-plato letra-azul-dark">EMPANADA</h3>
+                                    <p class="desc-plato">La empanada colombiana es un bocadillo típico hecho con...</p>
+                                    <p class="meta-plato">Categoría: <strong>Plato Fuerte</strong></p>
+                                    <p class="meta-plato">Fecha creación: <strong>20/05/26</strong></p>
+                                </div>
+                            </a>
+                            <a href="/plato/jugo-papaya" class="tarjeta-plato">
+                                <figure class="foto-plato">
+                                    <img src="imagenes/papaya.jpg" alt="Jugo de Papaya">
+                                </figure>
+                                <div class="info-plato">
+                                    <h3 class="nombre-plato letra-azul-dark">JUGO DE PAPAYA</h3>
+                                    <p class="desc-plato">Es una bebida refrescante y tropical, elaborada con la...</p>
+                                    <p class="meta-plato">Categoría: <strong>Bebida</strong></p>
+                                    <p class="meta-plato">Fecha creación: <strong>20/05/26</strong></p>
+                                </div>
+                            </a>
                         </article>
                     </div>
                     <a href="/crear_plato.html" class="btn-agregar-flotante fondo-verde letra-blanca" title="Agregar plato">
@@ -190,18 +233,39 @@
                         <article class="lista-tarjetas-grid grid-menu-pc">
                             <a href="/detalle_menu.html" class="tarjeta-menu-compuesta">
                                 <div class="mosaico-imagenes-menu">
-                                    
+                                    <figure class="img-menu-ppal">
+                                        <img src="imagenes/rata.jfif" alt="Ratatouille">
+                                    </figure>
+                                    <figure class="img-menu-sec">
+                                        <img src="imagenes/papaya.jpg" alt="Jugo Papaya">
+                                    </figure>
+                                    <figure class="img-menu-sec">
+                                        <img src="imagenes/leches.jfif" alt="Brownie / Postre">
+                                    </figure>
+                                    <figure class="img-menu-sec img-ancho-completo">
+                                        <img src="imagenes/empanada.jfif" alt="Empanadas">
+                                    </figure>
                                 </div>
                                 <div class="info-tarjeta-menu">
-                                
+                                    <h4 class="titulo-menu letra-negro">Titulo Menú</h4>
+                                    <span class="precio-menu letra-verde">$88.888</span>
                                 </div>
                             </a>
                             <a href="/detalle_menu.html" class="tarjeta-menu-compuesta">
                                 <div class="mosaico-imagenes-menu">
-                                    
+                                    <figure class="img-menu-ppal">
+                                        <img src="imagenes/rata.jfif" alt="Goulash de Carne">
+                                    </figure>
+                                    <figure class="img-menu-sec">
+                                        <img src="imagenes/papaya.jpg" alt="Café">
+                                    </figure>
+                                    <figure class="img-menu-sec">
+                                        <img src="imagenes/leches.jfif" alt="Flan">
+                                    </figure>
                                 </div>
                                 <div class="info-tarjeta-menu">
-                            
+                                    <h4 class="titulo-menu letra-negro">Titulo Menú</h4>
+                                    <span class="precio-menu letra-verde">$88.888</span>
                                 </div>
                             </a>
                         </article>
