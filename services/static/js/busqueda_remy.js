@@ -2,24 +2,26 @@ function inicializarBusquedaREMY() {
     const inputBusqueda = document.getElementById('input_busqueda');
     const btnEjecutar = document.getElementById('btn_ejecutar_busqueda');
     const btnFiltro = document.getElementById('btn_abrir_filtro');
+    const menuFiltro = document.getElementById('menu_desplegable_filtro');
+    const opcionesFiltro = document.querySelectorAll('.opcion-filtro');
     const contenedor = document.getElementById('sec_lista_resultados');
     const msjSinResultados = document.getElementById('sin_resultados_msj');
 
     if (!inputBusqueda) return;
 
-    const IMAGEN_DEFAULT = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=600&auto=format&fit=crop';
+    const IMAGEN_DEFAULT = '../../static/img/dummy_remy.png';
 
     async function buscar() {
         const q = inputBusqueda.value.trim();
 
         try {
-            // Petición al endpoint /buscar de Flask enviando el texto (vacío o con filtro)
             const response = await fetch(`/buscar?q=${encodeURIComponent(q)}`);
             if (!response.ok) throw new Error('Error al conectar con la base de datos');
 
             const data = await response.json();
             contenedor.innerHTML = '';
 
+            // Mostrar el dummy únicamente cuando no hayan resultados
             if (!Array.isArray(data) || data.length === 0) {
                 msjSinResultados.classList.remove('oculto');
                 return;
@@ -55,7 +57,31 @@ function inicializarBusquedaREMY() {
         }
     }
 
-    // Escuchadores de eventos
+    // Toggle para desplegar/ocultar el menú de filtros
+    if (btnFiltro && menuFiltro) {
+        btnFiltro.addEventListener('click', (e) => {
+            e.stopPropagation();
+            menuFiltro.classList.toggle('oculto');
+        });
+
+        // Ocultar desplegable si se hace clic fuera de él
+        document.addEventListener('click', (e) => {
+            if (!menuFiltro.contains(e.target) && e.target !== btnFiltro) {
+                menuFiltro.classList.add('oculto');
+            }
+        });
+    }
+
+    // Asignar texto de la opción seleccionada al input y ejecutar la búsqueda
+    opcionesFiltro.forEach(opcion => {
+        opcion.addEventListener('click', () => {
+            inputBusqueda.value = opcion.textContent.trim();
+            menuFiltro.classList.add('oculto');
+            buscar();
+        });
+    });
+
+    // Escuchadores de eventos para la barra de búsqueda
     inputBusqueda.addEventListener('input', buscar);
 
     btnEjecutar.addEventListener('click', (e) => {
@@ -70,13 +96,7 @@ function inicializarBusquedaREMY() {
         }
     });
 
-    if (btnFiltro) {
-        btnFiltro.addEventListener('click', () => {
-            alert('Filtro activado.');
-        });
-    }
-
-    // Ejecución inicial automática para listar todo al ingresar
+    // Búsqueda inicial automática al cargar
     buscar();
 }
 

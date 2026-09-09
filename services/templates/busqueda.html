@@ -16,7 +16,7 @@
     <!-- MAIN COMO GRAN PADRE CONTENEDOR TOTAL -->
     <main id="gran_padre_cont">
         
-        <!-- CABEZOTE SUPERIOR -->
+        <!-- CABEZOTE SUPERIOR CON ESTÉTICA VERDE DE PLATOS_MENU -->
         <header id="cabezote_sesion">
             <button type="button" class="btn-transparente" id="btn_menu_hambur" title="Menú" aria-label="Abrir menú principal">
                 <svg class="ico-svg ico-hambur-svg" viewBox="0 0 24 24" aria-hidden="true">
@@ -26,9 +26,9 @@
                 </svg>
             </button>
             
-            <h1 class="txt-cabezote">Busqueda</h1>
+            <h1 class="txt-cabezote">Búsqueda General</h1>
             
-            <!-- Redirección mediante href hacia platos/menús -->
+            <!-- Redirección mediante href hacia platos_menu -->
             <a href="{{ url_for('platos_menu') }}" class="btn-transparente" id="btn_cerrar_modal" title="Cerrar" aria-label="Cerrar búsqueda">
                 <svg class="ico-svg ico-cerrar-svg" viewBox="0 0 24 24" aria-hidden="true">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -65,6 +65,19 @@
                             </svg>
                         </button>
                     </div>
+
+                    <!-- DESPLEGABLE MINIMALISTA DE FILTROS -->
+                    <div id="menu_desplegable_filtro" class="menu-filtro-desplegable oculto">
+                        <ul>
+                            <li class="opcion-filtro">Plato fuerte</li>
+                            <li class="opcion-filtro">Entrada</li>
+                            <li class="opcion-filtro">Postre</li>
+                            <li class="opcion-filtro">Bebida</li>
+                            <li class="opcion-filtro">Plato</li>
+                            <li class="opcion-filtro">Menú</li>
+                            <li class="opcion-filtro">Ingrediente</li>
+                        </ul>
+                    </div>
                 </search>
             </section>
 
@@ -73,10 +86,11 @@
                 <!-- Las tarjetas se generarán dinámicamente desde busqueda_remy.js -->
             </section>
 
-            <!-- MENSAJE SI NO HAY RESULTADOS -->
-            <p id="sin_resultados_msj" class="oculto" role="status" aria-live="polite">
-                No se encontraron coincidencia con tu búsqueda.
-            </p>
+            <!-- CONTENEDOR DUMMY SIN RESULTADOS -->
+            <div id="sin_resultados_msj" class="cont-sin-resultados oculto">
+                <img src="{{ url_for('static', filename='img/dummy_busqueda_empty.png') }}" alt="Sin resultados" class="img-dummy-empty" onerror="this.src='../static/img/dummy_busqueda_empty.png'">
+                <p class="txt-sin-resultados">no se han encontrado resultados a tu busqueda</p>
+            </div>
 
         </section>
 
