@@ -46,7 +46,7 @@ html, body {
     min-height: 100vh;
     background-color: var(--blanco);
     font-family: 'sena-worksans', system-ui, -apple-system, sans-serif;
-    font-size: 21px;
+    font-size: 22px;
     color: var(--negro);
 }
 
@@ -220,6 +220,7 @@ main#cuerpo_ppal_cont {
     font-weight: normal;
     font-size: 0.95rem;
     letter-spacing: -0.3px;
+    color: var(--verde);
 }
 
 .txt-descripcion {
@@ -246,6 +247,10 @@ main#cuerpo_ppal_cont {
 
 .txt-meta {
     margin: 0;
+}
+
+.txt-letra {
+    color: var(--negro);
 }
 
 .txt-meta strong {
@@ -416,7 +421,7 @@ input:checked + .deslizador-swtch::before {
     }
 
     .txt-descripcion {
-        font-size: 0.95rem;
+        font-size: 1.1rem;
         line-height: 1.6;
     }
 

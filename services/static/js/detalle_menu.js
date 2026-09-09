@@ -21,7 +21,7 @@ async function cargarDetalleMenu() {
         const elPrecio = document.querySelector('.precio-platillo');
         const elDescripcion = document.querySelector('.txt-descripcion');
         const elFecha = document.querySelector('.col-meta-datos .txt-meta:nth-child(1) strong');
-        const elTiempos = document.querySelector('.col-meta-datos .txt-meta:nth-child(2) strong');
+        const elTiempos = document.querySelector('.col-meta-datos .txt-letra:nth-child(2) strong');
         const swtchEstado = document.getElementById('swtch_estado_plato');
         const btnEditar = document.getElementById('btn_flotante_editar');
 
