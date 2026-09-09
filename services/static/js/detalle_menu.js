@@ -5,10 +5,15 @@ async function cargarDetalleMenu() {
     if (!id_menu) return;
 
     try {
-        // 1. Obtener datos desde la API (puerto 5085)
-        const responseMenu = await fetch(`http://localhost:5085/menus/${id_menu}`);
-        const menu = await responseMenu.json();
+        // 1. Obtener datos desde la API de menús
+        const responseMenu = await fetch(`http://localhost:5084/menus/${id_menu}`);
 
+        if (!responseMenu.ok) {
+            console.error(`Error ${responseMenu.status}: No se encontró el menú '${id_menu}'`);
+            return;
+        }
+
+        const menu = await responseMenu.json();
         if (!menu) return;
 
         // 2. Poblar información básica en la interfaz
@@ -16,32 +21,36 @@ async function cargarDetalleMenu() {
         const elPrecio = document.querySelector('.precio-platillo');
         const elDescripcion = document.querySelector('.txt-descripcion');
         const elFecha = document.querySelector('.col-meta-datos .txt-meta:nth-child(1) strong');
-        const elTiempos = document.querySelector('.col-meta-datos .txt-meta:nth-child(2) strong');
+        const elTiempos = document.querySelector('.col-meta-datos .txt-letra:nth-child(2) strong');
         const swtchEstado = document.getElementById('swtch_estado_plato');
         const btnEditar = document.getElementById('btn_flotante_editar');
 
         if (elNombre) elNombre.textContent = menu.nombre ? menu.nombre.toUpperCase() : '';
         if (elPrecio) elPrecio.textContent = menu.precio ? `$${menu.precio}` : '$0';
         if (elDescripcion) elDescripcion.textContent = menu.descripcion || '';
-        if (elFecha) elFecha.textContent = menu.fecha_creacion ? menu.fecha_creacion.split('T')[0] : '';
-        if (elTiempos) elTiempos.textContent = menu.tiempos || '0';
+        if (elFecha) elFecha.textContent = menu.fecha_creacion ? menu.fecha_creacion.split('T')[0] : 'Sin fecha';
+        
+        // Asignar el campo exacto del backend: tiempos_menu
+        if (elTiempos) elTiempos.textContent = menu.tiempos_menu ?? '0';
+
         if (btnEditar) btnEditar.href = `/modificar_menu/${id_menu}`;
 
         if (swtchEstado) {
-            swtchEstado.checked = menu.estado === 'Activo' || menu.activo === true;
+            swtchEstado.checked = menu.estado === 'Activo';
             swtchEstado.dispatchEvent(new Event('change'));
         }
 
-        // 3. Renderizar carrusel dinámico si la API envía imágenes
+        // 3. Extraer las imágenes de los platos anidados (campo img_plato)
+        let imagenes = [];
+        if (Array.isArray(menu.platos) && menu.platos.length > 0) {
+            imagenes = menu.platos
+                .map(plato => plato.img_plato)
+                .filter(url => url && url.trim() !== '');
+        }
+
+        // 4. Renderizar carrusel de imágenes
         const tiraDiapositivas = document.getElementById('tira_imagenes');
         const contPuntos = document.getElementById('cont_puntos_carrusel');
-
-        let imagenes = [];
-        if (Array.isArray(menu.imagenes) && menu.imagenes.length > 0) {
-            imagenes = menu.imagenes;
-        } else if (menu.imagen_url || menu.img_menu) {
-            imagenes = [menu.imagen_url || menu.img_menu];
-        }
 
         if (tiraDiapositivas && contPuntos && imagenes.length > 0) {
             tiraDiapositivas.innerHTML = '';
@@ -49,21 +58,20 @@ async function cargarDetalleMenu() {
 
             imagenes.forEach((imgUrl, idx) => {
                 tiraDiapositivas.innerHTML += `
-                    <figure class="item-diapositiva">
-                        <img src="${imgUrl}" alt="${menu.nombre || 'Menú'}" class="img-fluida">
+                    <figure class="item-diapositiva" style="min-width: 100%; box-sizing: border-box;">
+                        <img src="${imgUrl}" alt="${menu.nombre || 'Menú'}" class="img-fluida" style="width: 100%; height: 100%; object-fit: cover; display: block;">
                     </figure>
                 `;
                 contPuntos.innerHTML += `
                     <button type="button" class="btn-punto ${idx === 0 ? 'activo' : ''}" data-slide="${idx}" aria-label="Foto ${idx + 1}"></button>
                 `;
             });
+
+            inicializarCarrusel();
         }
 
-        // 4. Inicializar carrusel con los elementos DOM generados
-        inicializarCarrusel();
-
     } catch (error) {
-        console.error('Error al cargar el detalle del menú:', error);
+        console.error('Error al conectar con la API de menús:', error);
     }
 }
 
@@ -149,7 +157,6 @@ function inicializarREMY() {
         swtchEstado.addEventListener('change', actualizarEstadoUI);
     }
 
-    // Carga asíncrona de datos desde el backend
     cargarDetalleMenu();
 }
 
