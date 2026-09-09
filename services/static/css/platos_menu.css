@@ -21,6 +21,32 @@
     transition: none;
 }
 
+:root {
+    --amarillo: #FFDE59;
+    --azul-dark: #00304D;
+    --azul-lite: #C8D7F5;
+    --blanco: rgb(252, 252, 252);
+    --gris: #EFEFEF;
+    --gris-dark: #545454;
+    --naranja: #FF914D;
+    --negro: #111111;
+    --purpura: #8A2BE2;
+    --rojo: #FF3131;
+    --rojo-lite: #f48888;
+    --verde: #00A82D;
+    --verde-lite: #90C487;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--blanco);
+    font-family: 'sena-worksans', sans-serif;
+    font-size: 21px;
+    height: 100vh;
+    overflow: hidden;
+}
+
 a {
     color: inherit;
     text-decoration: none;
@@ -33,41 +59,14 @@ figure {
     border: none;
 }
 
-figure img, figure svg {
+figure img, 
+figure svg {
     margin: 0;
     padding: 0;
     width: 100%;
     border: none;
 }
 
-:root {
-    --amarillo: #FFDE59;
-    --azul-dark: #00304D;
-    --azul-lite: #C8D7F5;
-    --blanco: rgb(252,252,252);
-    --gris: #EFEFEF;
-    --gris-dark: #545454;
-    --naranja: #FF914D;
-    --negro: #111111;
-    --purpura: #8A2BE2;
-    --rojo: #FF3131;
-    --rojo-lite: #f48888;
-    --verde: #00A82D;
-    --verde-lite: #90C487;
-}
-
-/* Base de Documento */
-html, body {
-    margin: 0;
-    padding: 0;
-    background-color: var(--blanco);
-    font-family: 'sena-worksans', sans-serif;
-    font-size: 21px;
-    height: 100vh;
-    overflow: hidden;
-}
-
-/* Gran Contenedor Padre */
 main#gran_cont_ppal {
     width: 100vw;
     height: 100vh;
@@ -77,12 +76,10 @@ main#gran_cont_ppal {
     overflow: hidden;
 }
 
-/* Sidebar Oculto por defecto en Móvil */
 aside#barra_lateral_nav {
     display: none;
 }
 
-/* Área Derecha de Contenido */
 section#cont_derecho_contenido {
     flex: 1;
     display: flex;
@@ -92,7 +89,6 @@ section#cont_derecho_contenido {
     overflow: hidden;
 }
 
-/* Cabezote Azul Superior */
 header#cabezote_seccion_ppal {
     background-color: var(--azul-dark);
     color: var(--blanco);
@@ -120,13 +116,19 @@ header#cabezote_seccion_ppal {
 
 #btn_cerrar_vista {
     color: var(--blanco);
-    font-size: 1.3rem;
-    text-decoration: none;
+    width: 22px;
+    height: 22px;
     display: none;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
 }
 
-/* Navegación por Pestañas Móvil */
+#btn_cerrar_vista svg {
+    width: 22px;
+    height: 22px;
+}
+
 nav#nav_pestanas_ppal {
     display: flex;
     align-items: center;
@@ -184,7 +186,6 @@ div#cont_acciones_pestanas {
     background-color: #CCC;
 }
 
-/* Grid de Contenido (Platos y Menús) */
 #grid_dos_columnas {
     display: flex;
     flex: 1;
@@ -218,9 +219,6 @@ div#cont_acciones_pestanas {
     display: none !important;
 }
 
-/* ==========================================================================
-   ESTILOS DE TARJETAS
-   ========================================================================== */
 .lista-tarjetas-grid {
     display: flex;
     flex-direction: column;
@@ -229,7 +227,6 @@ div#cont_acciones_pestanas {
     margin: 0 auto;
 }
 
-/* --- Tarjeta Menú --- */
 .tarjeta-menu-compuesta {
     background-color: #EAEAEA;
     border-radius: 18px;
@@ -242,10 +239,6 @@ div#cont_acciones_pestanas {
     border: none;
 }
 
-/* Grid Mosaico Exacto:
-   Columna 1: 2fr (50% Ancho Total) -> Foto Principal
-   Columna 2 y 3: 1fr cada una (25% + 25%) -> Fotos secundarias
-*/
 .mosaico-imagenes-menu {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr;
@@ -254,7 +247,6 @@ div#cont_acciones_pestanas {
     width: 100%;
 }
 
-/* Foto Principal (50% de la tarjeta a la izquierda) */
 .img-menu-ppal {
     grid-column: 1 / 2;
     grid-row: 1 / span 2;
@@ -263,20 +255,19 @@ div#cont_acciones_pestanas {
     margin: 0;
 }
 
-/* Fotos secundarias cuadradas (Arriba a la derecha) */
 .img-menu-sec {
     border-radius: 12px;
     overflow: hidden;
     margin: 0;
 }
 
-/* Foto Alargada (Abajo a la derecha ocupando ambas mini columnas) */
 .img-ancho-completo {
     grid-column: 2 / span 2;
     grid-row: 2 / 3;
 }
 
-.img-menu-ppal img, .img-menu-sec img {
+.img-menu-ppal img, 
+.img-menu-sec img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -302,8 +293,8 @@ div#cont_acciones_pestanas {
 }
 
 .precio-menu {
-    font-weight: normal; /* Sin bold según indicación */
-    font-size: 0.95rem;   /* Tamaño reducido */
+    font-weight: normal;
+    font-size: 0.95rem;
     letter-spacing: -0.3px;
 }
 
@@ -359,12 +350,11 @@ div#cont_acciones_pestanas {
 }
 
 .tarjeta-plato p.meta-plato {
-    margin: 0;
+    margin: 0 0 0.1rem;
     font-size: 0.55rem;
     color: var(--negro);
 }
 
-/* Botón Flotante (+ Add) */
 .btn-agregar-flotante {
     position: absolute;
     bottom: 20px;
@@ -387,6 +377,10 @@ div#cont_acciones_pestanas {
     height: 26px;
 }
 
+.btn-agregar-flotante .texto-btn-pc {
+    display: none;
+}
+
 /* Utilitarios */
 .letra-azul-dark { color: var(--azul-dark); }
 .letra-negro { color: var(--negro); }
@@ -394,10 +388,143 @@ div#cont_acciones_pestanas {
 .fondo-verde { background-color: var(--verde); }
 .letra-blanca { color: var(--blanco); }
 
+@media screen and (min-width: 700px) and (max-width: 1019px) {
 
-/* ==========================================================================
-   MEDIA QUERIES - VISTA PC (min-width: 1020px)
-   ========================================================================== */
+    #gran_cont_ppal {
+        width: 100vw;
+        height: 100vh;
+    }
+
+    aside#barra_lateral_nav,
+    #btn_cerrar_vista {
+        display: none !important;
+    }
+
+    nav#nav_pestanas_ppal {
+        display: flex !important;
+    }
+
+    #titulo_vista_ppal {
+        font-size: 1.35rem;
+    }
+
+    #grid_dos_columnas {
+        display: block;
+        height: calc(100vh - 104px);
+    }
+
+    .columna-vista {
+        width: 100%;
+        height: 100%;
+    }
+
+    #sec_col_platos .lista-tarjetas-grid,
+    #sec_col_menu .lista-tarjetas-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.1rem;
+        padding: 0.2rem;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .tarjeta-plato {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 0.85rem;
+        border-radius: 20px;
+        background-color: #EAEAEA;
+    }
+
+    .tarjeta-plato figure.foto-plato {
+        width: 100%;
+        aspect-ratio: 1.25 / 1;
+        min-height: 150px;
+        border-radius: 16px;
+        margin-bottom: 0.6rem;
+        overflow: hidden;
+    }
+
+    .tarjeta-plato figure.foto-plato img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .tarjeta-plato div.info-plato {
+        width: 100%;
+        text-align: left;
+    }
+
+    .tarjeta-plato h3.nombre-plato {
+        font-size: 0.92rem;
+        font-weight: 700;
+        margin-bottom: 0.3rem;
+    }
+
+    .tarjeta-plato p.desc-plato {
+        font-size: 0.62rem;
+        line-height: 1.25;
+        color: var(--gris-dark);
+        margin-bottom: 0.4rem;
+    }
+
+    .tarjeta-plato p.meta-plato {
+        font-size: 0.58rem;
+        line-height: 1.3;
+    }
+
+    .tarjeta-menu-compuesta {
+        width: 100%;
+        padding: 0.85rem;
+        border-radius: 20px;
+        background-color: #EAEAEA;
+    }
+
+    .mosaico-imagenes-menu {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        grid-template-rows: repeat(2, 80px);
+        gap: 0.45rem;
+        width: 100%;
+    }
+
+    .img-menu-ppal {
+        grid-column: 1 / 2;
+        grid-row: 1 / span 2;
+        border-radius: 16px;
+    }
+
+    .img-menu-sec {
+        border-radius: 12px;
+    }
+
+    .info-tarjeta-menu {
+        margin-top: 0.6rem;
+        padding: 0 0.3rem;
+    }
+
+    .titulo-menu {
+        font-size: 0.92rem;
+    }
+
+    .precio-menu {
+        font-size: 1rem;
+    }
+
+    .btn-agregar-flotante {
+        width: 56px;
+        height: 56px;
+        bottom: 24px;
+        right: 24px;
+    }
+
+    .btn-agregar-flotante svg {
+        width: 28px;
+        height: 28px;
+    }
+}
+
 @media screen and (min-width: 1020px) {
 
     aside#barra_lateral_nav {
@@ -406,18 +533,18 @@ div#cont_acciones_pestanas {
         flex-direction: column;
         justify-content: space-between;
         align-items: center;
-        flex-basis: 70px;
-        min-width: 85px;
+        width: 75px;
+        min-width: 75px;
         height: 100vh;
-        padding: 18px 0;
-        border-right: 1px solid #DDD;
+        padding: 20px 0;
+        border-right: 1px solid #E5E5E5;
         flex-shrink: 0;
         z-index: 10;
     }
 
     aside#barra_lateral_nav figure#marca_remy_lat {
-        margin-left: 0;
-        width: 70px;
+        margin: 0;
+        width: 55px;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -429,11 +556,10 @@ div#cont_acciones_pestanas {
     }
 
     aside#barra_lateral_nav nav#menu_iconos_lat {
-        height: 250px;
         display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
         flex-direction: column;
+        align-items: center;
+        gap: 1.8rem;
     }
 
     aside#barra_lateral_nav nav#menu_iconos_lat .btn-ico-lat {
@@ -446,40 +572,40 @@ div#cont_acciones_pestanas {
     }
 
     aside#barra_lateral_nav nav#menu_iconos_lat .btn-ico-lat svg {
-        width: 30px;
-        height: 30px;
+        width: 24px;
+        height: 24px;
     }
 
     aside#barra_lateral_nav nav#menu_iconos_lat .btn-ico-lat.activo {
         color: var(--verde);
+        position: relative;
     }
 
-    aside#barra_lateral_nav div#firma_codigo_lat {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 30px;
-        height: 30px;
-        font-weight: bold;
+    figure#ico_codigo {
+        width: 24px;
+    }
+
+    #firma_codigo_lat {
         color: var(--negro);
-        font-size: 1.1rem;
     }
 
     section#cont_derecho_contenido {
-        flex-basis: 100%;
+        flex: 1;
         height: 100vh;
+        overflow: hidden;
     }
 
-    #btn_menu_movil, nav#nav_pestanas_ppal {
+    #btn_menu_movil, 
+    nav#nav_pestanas_ppal {
         display: none !important;
     }
 
     #btn_cerrar_vista {
-        display: block;
+        display: flex !important;
     }
 
     #titulo_vista_ppal {
-        font-size: 1.6rem;
+        font-size: 1.5rem;
     }
 
     #grid_dos_columnas {
@@ -492,63 +618,63 @@ div#cont_acciones_pestanas {
     .columna-vista {
         display: flex !important;
         flex-direction: column;
-        padding: 0 1.2rem 1rem 1.2rem;
+        padding: 0 1rem 1rem 1rem;
         height: 100%;
         position: relative;
         overflow: hidden;
     }
 
     #sec_col_platos {
-        border-right: 2px solid #E5E5E5;
+        border-right: 1px solid #E5E5E5;
     }
 
     .header-columna-pc {
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 0.8rem 0 0.6rem 0;
+        padding: 0.8rem 0 0.5rem 0;
         background-color: var(--blanco);
         flex-shrink: 0;
     }
 
     .subtitulo-col-pc {
         text-align: center;
-        font-size: 1.3rem;
+        font-size: 1.25rem;
         margin: 0 0 0.4rem 0;
         color: var(--negro);
-        font-weight: bold;
+        font-weight: 700;
     }
 
     .linea-separadora-header {
         width: 100%;
         height: 1px;
-        background-color: #DDD;
+        background-color: #E5E5E5;
     }
 
     .cont-scroll-interno {
         flex: 1;
         overflow-y: auto;
-        padding-bottom: 80px;
+        padding-bottom: 75px;
         padding-top: 0.5rem;
     }
 
     .lista-tarjetas-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
+        gap: 0.8rem;
     }
 
     .tarjeta-plato {
         flex-direction: column;
         align-items: stretch;
-        padding: 0.8rem;
-        border-radius: 20px;
+        padding: 0.75rem;
+        border-radius: 18px;
     }
 
     .tarjeta-plato figure.foto-plato {
         width: 100%;
-        height: 135px;
-        border-radius: 16px;
+        height: 130px;
+        border-radius: 14px;
         margin-bottom: 0.5rem;
     }
 
@@ -556,26 +682,38 @@ div#cont_acciones_pestanas {
         text-align: left;
     }
 
-    .tarjeta-plato h3.nombre-plato {
-        font-size: 0.9rem;
-        margin-bottom: 0.2rem;
-    }
-
-    .tarjeta-plato p.desc-plato {
-        font-size: 0.62rem;
-        margin-bottom: 0.3rem;
-    }
-
-    .tarjeta-plato p.meta-plato {
-        font-size: 0.58rem;
-    }
-
     .btn-agregar-flotante {
         position: absolute;
-        bottom: 25px;
-        right: 40px;
-        width: 55px;
-        height: 55px;
+        bottom: 18px;
+        left: 50%;
+        transform: translateX(-50%);
+        right: auto;
+        width: auto;
+        height: auto;
+        padding: 0.55rem 1.6rem;
+        border-radius: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         z-index: 10;
+        background-color: var(--verde);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+    }
+
+    .btn-agregar-flotante svg {
+        display: none;
+    }
+
+    .btn-agregar-flotante .texto-btn-pc {
+        display: inline-block;
+        color: var(--blanco);
+        font-size: 0.85rem;
+        font-weight: 700;
+        white-space: nowrap;
+        text-transform: lowercase;
+    }
+
+    .btn-agregar-flotante .texto-btn-pc::first-letter {
+        text-transform: uppercase;
     }
 }
