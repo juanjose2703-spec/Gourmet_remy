@@ -34,6 +34,14 @@ def index():
 def platos_menu():
     return render_template('platos_menu.html')
 
+@programa.route('/crear_plato')
+def crear_plato():
+    return render_template('platos/templates/crear_plato.html')
+
+@programa.route('/modificar_plato/<id_plato>')
+def modificar_plato(id_plato):
+    return render_template('platos/templates/modificar_plato.html')
+
 @programa.route('/busqueda')
 def busqueda():
     return render_template('busqueda.html')
