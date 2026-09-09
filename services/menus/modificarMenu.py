@@ -33,7 +33,11 @@ def modificarMenu(data: dict) -> str:
 
         cursor = conn.cursor()
 
-        conn.start_transaction()
+        try:
+            conn.start_transaction()
+        except:
+            conn.rollback()
+            conn.start_transaction()
 
         sql = "UPDATE Menu SET nombre=%s, tiempos_menu=%s, precio=%s, descripcion=%s, estado=%s WHERE id_menu=%s"
         cursor.execute(sql, (nombre, tiempos, precio, desc, estado, id_menu))
