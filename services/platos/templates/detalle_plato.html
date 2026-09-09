@@ -26,77 +26,55 @@
             </div>
         </header>
         <article class="cuerpo-tarjetas-detalle">
-            <section class="tarjeta-gris bloque-foto-plato">
-                <figure class="marco-imagen-plato">
-                    <img src="imagenes/empanada.jfif" alt="Empanada colombiana">
-                </figure>
-            </section>
-            <div class="columna-derecha-detalle">
-                <section class="tarjeta-gris bloque-informacion-plato">
-                    <h3 class="nombre-plato">Empanada</h3>
-                    <p class="descripcion-plato">
-                        La empanada colombiana de carne es un bocadillo frito hecho con una masa de maíz amarillo muy crujiente.<br>
-                        Su interior contiene un relleno jugoso de carne desmechada o molida mezclada con papa cocida y hogao.
-                    </p>
-                    <div class="pie-tarjeta-informacion">
-                        <div class="datos-meta-plato">
-                            <p class="linea-meta">Categoría: <strong>Plato Fuerte</strong></p>
-                            <p class="linea-meta">Fecha creación: <strong>20/05/26</strong></p>
-                        </div>
-                        <div class="conmutador-estado">
-                            <span class="etiqueta-estado">Estado</span>
-                            <label class="interruptor-activo">
-                                <input type="checkbox" id="selector_estado_activo" checked>
-                                <span class="deslizador-interruptor"></span>
-                            </label>
-                        </div>
-                    </div>
-                </section>
-                <section class="tarjeta-gris bloque-tabla-ingredientes">
-                    <h3 class="titulo-ingredientes">Ingredientes</h3>
-                    <div class="contenedor-scroll-ingredientes">
-                        <table class="tabla-detalle-ingredientes">
-                            <thead>
-                                <tr>
-                                    <th class="columna-nombre">Nombre</th>
-                                    <th class="columna-existencia">Stock</th>
-                                    <th class="columna-unidad">Unidad</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Ingrediente 1</td>
-                                    <td>1000</td>
-                                    <td>gr</td>
-                                </tr>
-                                <tr>
-                                    <td>Ingrediente 1</td>
-                                    <td>1000</td>
-                                    <td>gr</td>
-                                </tr>
-                                <tr>
-                                    <td>Ingrediente 1</td>
-                                    <td>1000</td>
-                                    <td>gr</td>
-                                </tr>
-                                <tr>
-                                    <td>Ingrediente 1</td>
-                                    <td>1000</td>
-                                    <td>gr</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
-
+    <section class="tarjeta-gris bloque-foto-plato">
+        <figure class="marco-imagen-plato">
+            <img id="img_plato" src="" alt="">
+        </figure>
+    </section>
+    <div class="columna-derecha-detalle">
+        <section class="tarjeta-gris bloque-informacion-plato">
+            <h3 class="nombre-plato" id="nombre_plato"></h3>
+            <p class="descripcion-plato" id="descripcion_plato"></p>
+            <div class="pie-tarjeta-informacion">
+                <div class="datos-meta-plato">
+                    <p class="linea-meta">Categoría: <strong id="categoria_plato"></strong></p>
+                    <p class="linea-meta">Fecha creación: <strong id="fecha_plato"></strong></p>
+                </div>
+                <div class="conmutador-estado">
+                    <span class="etiqueta-estado">Estado</span>
+                    <label class="interruptor-activo">
+                        <input type="checkbox" id="selector_estado_activo">
+                        <span class="deslizador-interruptor"></span>
+                    </label>
+                </div>
             </div>
-
-        </article>
+        </section>
+        <section class="tarjeta-gris bloque-tabla-ingredientes">
+            <h3 class="titulo-ingredientes">Ingredientes</h3>
+            <div class="contenedor-scroll-ingredientes">
+                <table class="tabla-detalle-ingredientes">
+                    <thead>
+                        <tr>
+                            <th class="columna-nombre">Nombre</th>
+                            <th class="columna-existencia">Stock</th>
+                            <th class="columna-unidad">Unidad</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody_ingredientes">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</article>
         <a href="modificar_plato.html" id="btn_flotante_editar" class="fondo-verde letra-blanca" title="Editar plato">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor">
                 <path d="M227.31,73.37,182.63,28.69a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96A16,16,0,0,0,227.31,73.37ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.69,147.31,64l24-24L216,84.69Z"/>
             </svg>
         </a>
     </main>
+
+    <script src="../static/js/detalle_plato.js" defer></script>
+
 </body>
 </html>

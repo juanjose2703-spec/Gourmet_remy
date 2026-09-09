@@ -17,6 +17,10 @@ def platos_menu():
 def busqueda():
     return render_template('busqueda.html')
 
+@programa.route('/detalle_plato/<id_plato>')
+def detalle_plato(id_plato):
+    return render_template('detalle_plato.html')
+
 @programa.route('/buscar')
 def buscar():
     q = request.args.get('q', '')
