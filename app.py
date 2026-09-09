@@ -1,6 +1,9 @@
+import os
 from flask import Flask, render_template, request
 from flask_cors import CORS
 from buscarGeneral import buscarGeneral
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 programa = Flask(
     __name__,
