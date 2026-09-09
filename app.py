@@ -26,7 +26,7 @@ def busqueda():
 
 @programa.route('/detalle_plato/<id_plato>')
 def detalle_plato(id_plato):
-    return render_template('detalle_plato.html')
+    return render_template('platos/templates/detalle_plato.html')
 
 @programa.route('/buscar')
 def buscar():

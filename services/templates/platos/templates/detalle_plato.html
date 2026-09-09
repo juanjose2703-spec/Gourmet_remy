@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalle de plato | REMY 1.0</title>
     
-    <link rel="stylesheet" href="../../static/css/normalize.css">
-    <link rel="stylesheet" href="../static/css/detalle_plato.css">
-    <script src="../../static/js/interacciones.js" defer></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/detalle_plato.css') }}">
+    <script src="{{ url_for('static', filename='js/interacciones.js') }}" defer></script>
 </head>
 <body id="cuerpo_detalle_plato">
 
@@ -18,7 +18,7 @@
                     <path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"/>
                 </svg>
                 <h2 id="titulo_vista_detalle">Detalle Plato</h2>
-                <a href="platos_menu.html" id="btn_cerrar_detalle" title="Cerrar">
+                <a href="/platos_menu" id="btn_cerrar_detalle" title="Cerrar">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor">
                         <path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/>
                     </svg>
@@ -26,55 +26,54 @@
             </div>
         </header>
         <article class="cuerpo-tarjetas-detalle">
-    <section class="tarjeta-gris bloque-foto-plato">
-        <figure class="marco-imagen-plato">
-            <img id="img_plato" src="" alt="">
-        </figure>
-    </section>
-    <div class="columna-derecha-detalle">
-        <section class="tarjeta-gris bloque-informacion-plato">
-            <h3 class="nombre-plato" id="nombre_plato"></h3>
-            <p class="descripcion-plato" id="descripcion_plato"></p>
-            <div class="pie-tarjeta-informacion">
-                <div class="datos-meta-plato">
-                    <p class="linea-meta">Categoría: <strong id="categoria_plato"></strong></p>
-                    <p class="linea-meta">Fecha creación: <strong id="fecha_plato"></strong></p>
-                </div>
-                <div class="conmutador-estado">
-                    <span class="etiqueta-estado">Estado</span>
-                    <label class="interruptor-activo">
-                        <input type="checkbox" id="selector_estado_activo">
-                        <span class="deslizador-interruptor"></span>
-                    </label>
-                </div>
+            <section class="tarjeta-gris bloque-foto-plato">
+                <figure class="marco-imagen-plato">
+                    <img id="img_plato" src="" alt="">
+                </figure>
+            </section>
+            <div class="columna-derecha-detalle">
+                <section class="tarjeta-gris bloque-informacion-plato">
+                    <h3 class="nombre-plato" id="nombre_plato"></h3>
+                    <p class="descripcion-plato" id="descripcion_plato"></p>
+                    <div class="pie-tarjeta-informacion">
+                        <div class="datos-meta-plato">
+                            <p class="linea-meta">Categoría: <strong id="categoria_plato"></strong></p>
+                            <p class="linea-meta">Fecha creación: <strong id="fecha_plato"></strong></p>
+                        </div>
+                        <div class="conmutador-estado">
+                            <span class="etiqueta-estado">Estado</span>
+                            <label class="interruptor-activo">
+                                <input type="checkbox" id="selector_estado_activo">
+                                <span class="deslizador-interruptor"></span>
+                            </label>
+                        </div>
+                    </div>
+                </section>
+                <section class="tarjeta-gris bloque-tabla-ingredientes">
+                    <h3 class="titulo-ingredientes">Ingredientes</h3>
+                    <div class="contenedor-scroll-ingredientes">
+                        <table class="tabla-detalle-ingredientes">
+                            <thead>
+                                <tr>
+                                    <th class="columna-nombre">Nombre</th>
+                                    <th class="columna-existencia">Stock</th>
+                                    <th class="columna-unidad">Unidad</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody_ingredientes">
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
             </div>
-        </section>
-        <section class="tarjeta-gris bloque-tabla-ingredientes">
-            <h3 class="titulo-ingredientes">Ingredientes</h3>
-            <div class="contenedor-scroll-ingredientes">
-                <table class="tabla-detalle-ingredientes">
-                    <thead>
-                        <tr>
-                            <th class="columna-nombre">Nombre</th>
-                            <th class="columna-existencia">Stock</th>
-                            <th class="columna-unidad">Unidad</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbody_ingredientes">
-                    </tbody>
-                </table>
-            </div>
-        </section>
-    </div>
-</article>
-        <a href="modificar_plato.html" id="btn_flotante_editar" class="fondo-verde letra-blanca" title="Editar plato">
+        </article>
+        <a href="/modificar_plato" id="btn_flotante_editar" class="fondo-verde letra-blanca" title="Editar plato">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor">
                 <path d="M227.31,73.37,182.63,28.69a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96A16,16,0,0,0,227.31,73.37ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.69,147.31,64l24-24L216,84.69Z"/>
             </svg>
         </a>
     </main>
 
-    <script src="../static/js/detalle_plato.js" defer></script>
-
+    <script src="{{ url_for('static', filename='js/detalle_plato.js') }}" defer></script>
 </body>
 </html>
