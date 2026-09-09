@@ -1,70 +1,104 @@
-/* ==========================================================================
-   CONTROLADOR JS BÚSQUEDA EN TIEMPO REAL - REMY 1.0
-   ========================================================================== */
-
 function inicializarBusquedaREMY() {
     const inputBusqueda = document.getElementById('input_busqueda');
     const btnEjecutar = document.getElementById('btn_ejecutar_busqueda');
     const btnFiltro = document.getElementById('btn_abrir_filtro');
-    const listaTarjetas = document.querySelectorAll('.tarjeta-item-resultado');
+    const panelFiltro = document.getElementById('panel_filtro');
+    const contenedor = document.getElementById('sec_lista_resultados');
     const msjSinResultados = document.getElementById('sin_resultados_msj');
+    const btnsFiltroTipo = document.querySelectorAll('.btn-filtro-tipo');
 
-    if (!inputBusqueda || listaTarjetas.length === 0) return;
+    if (!inputBusqueda) return;
 
-    // Función principal para filtrar elementos según el texto escrito
-    function filtrarElementos() {
-        const textoFiltro = inputBusqueda.value.toLowerCase().trim();
-        let contadorVisibles = 0;
+    let todosLosResultados = [];
+    let filtroActivo = 'todos';
 
-        listaTarjetas.forEach((tarjeta) => {
-            const titulo = tarjeta.getAttribute('data-titulo') || '';
-            const categoria = tarjeta.getAttribute('data-categoria') || '';
-            const contenidoTexto = tarjeta.textContent.toLowerCase();
+    function pintarResultados(datos) {
+        contenedor.innerHTML = '';
 
-            // Comprueba si el texto ingresado coincide con el título, categoría o texto
-            if (titulo.includes(textoFiltro) || categoria.includes(textoFiltro) || contenidoTexto.includes(textoFiltro)) {
-                tarjeta.classList.remove('oculto');
-                contadorVisibles++;
-            } else {
-                tarjeta.classList.add('oculto');
-            }
-        });
+        const filtrados = filtroActivo === 'todos'
+            ? datos
+            : datos.filter(item => item.tipo === filtroActivo);
 
-        // Muestra u oculta el mensaje de "Sin resultados"
-        if (contadorVisibles === 0) {
+        if (filtrados.length === 0) {
             msjSinResultados.classList.remove('oculto');
-        } else {
+            return;
+        }
+
+        msjSinResultados.classList.add('oculto');
+
+        filtrados.forEach(item => {
+            const fecha = item.fecha_creacion ? item.fecha_creacion.split('T')[0] : 'Sin fecha';
+
+            contenedor.innerHTML += `
+                <article class="tarjeta-plato"
+                    data-titulo="${item.nombre.toLowerCase()}"
+                    data-categoria="${item.tipo.toLowerCase()}">
+                    <figure class="foto-plato">
+                        <img src="${imagen}" alt="${item.nombre}" onerror="this.src='imagenes/rata.jfif'">
+                    </figure>
+                    <div class="info-plato">
+                        <h3 class="nombre-plato letra-azul-dark">${item.nombre.toUpperCase()}</h3>
+                        <p class="desc-plato">${item.descripcion}</p>
+                        <p class="meta-plato">Tipo: <strong>${item.tipo}</strong></p>
+                        <p class="meta-plato">Fecha creación: <strong>${fecha}</strong></p>
+                    </div>
+                </article>
+            `;
+        });
+    }
+
+    async function buscar() {
+        const q = inputBusqueda.value.trim();
+
+        if (q.length === 0) {
+            contenedor.innerHTML = '';
+            todosLosResultados = [];
             msjSinResultados.classList.add('oculto');
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:5000/buscar?q=${encodeURIComponent(q)}`);
+            todosLosResultados = await response.json();
+            pintarResultados(todosLosResultados);
+        } catch (error) {
+            console.error('Error al buscar:', error);
         }
     }
 
-    // Evento de escritura en tiempo real
-    inputBusqueda.addEventListener('input', filtrarElementos);
+    // Evento escritura en tiempo real
+    inputBusqueda.addEventListener('input', buscar);
 
-    // Evento al dar clic en la Lupa de Búsqueda
+    // Evento lupa
     btnEjecutar.addEventListener('click', (e) => {
         e.preventDefault();
-        filtrarElementos();
+        buscar();
     });
 
-    // Evento al presionar Enter dentro del input
+    // Evento Enter
     inputBusqueda.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
-            filtrarElementos();
+            buscar();
         }
     });
 
-    // Evento para el botón de filtro
+    // Evento abrir/cerrar panel de filtro
     btnFiltro.addEventListener('click', () => {
-        alert('Funcionalidad de filtro avanzado seleccionada.');
+        panelFiltro.classList.toggle('oculto');
     });
 
-    // Ejecuta el filtro inicial para reflejar lo escrito por defecto ("Ca")
-    filtrarElementos();
+    // Evento botones de filtro por tipo
+    btnsFiltroTipo.forEach(btn => {
+        btn.addEventListener('click', () => {
+            btnsFiltroTipo.forEach(b => b.classList.remove('activo'));
+            btn.classList.add('activo');
+            filtroActivo = btn.getAttribute('data-tipo');
+            pintarResultados(todosLosResultados);
+        });
+    });
 }
 
-// Ejecución limpia
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', inicializarBusquedaREMY);
 } else {

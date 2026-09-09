@@ -263,6 +263,31 @@ main#cuerpo_ppal_cont {
 .letra-azul-dark { color: var(--azul-dark); }
 .letra-negro { color: var(--negro); }
 
+/* Panel de filtro por tipo */
+#panel_filtro {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    padding: 0.4rem 0;
+}
+
+.btn-filtro-tipo {
+    background-color: var(--gris);
+    border: 1.5px solid var(--azul-dark);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 0.72rem;
+    font-family: 'sena-worksans', sans-serif;
+    font-weight: 700;
+    color: var(--azul-dark);
+    cursor: pointer;
+}
+
+.btn-filtro-tipo.activo {
+    background-color: var(--azul-dark);
+    color: var(--blanco);
+}
 /* Adaptación PC / Tablets */
 @media screen and (min-width: 1020px) {
     #titulo_vista_ppal {

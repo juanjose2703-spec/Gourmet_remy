@@ -65,13 +65,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const categorias = {1: 'Entrada', 2: 'Plato Fuerte', 3: 'Postre', 4: 'Bebida'};
                 const categoria = categorias[plato.categoria] || 'Sin categoría';
                 const fecha = plato.fecha_creacion ? plato.fecha_creacion.split('T')[0] : 'Sin fecha';
-                const imagen = plato.img_plato || 'imagenes/rata.jfif';
+                const imagen = plato.img_plato || '';
                 const opacidad = plato.estado === 'Inactivo' ? 'style="opacity:0.4"' : '';
 
                 contenedor.innerHTML += `
                     <a href="/detalle_plato/${plato.id_plato}" class="tarjeta-plato" ${opacidad}>
                         <figure class="foto-plato">
-                            <img src="${imagen}" alt="${plato.nombre}" onerror="this.src='imagenes/rata.jfif'">
+                            <img src="${imagen}" alt="${plato.nombre}">
                         </figure>
                         <div class="info-plato">
                             <h3 class="nombre-plato letra-azul-dark">${plato.nombre.toUpperCase()}</h3>
@@ -102,16 +102,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 let mosaico = '';
                 if (platos.length >= 1) {
-                    mosaico += `<figure class="img-menu-ppal"><img src="${platos[0].img_plato || 'imagenes/rata.jfif'}" alt="${platos[0].nombre}" onerror="this.src='imagenes/rata.jfif'"></figure>`;
+                    mosaico += `<figure class="img-menu-ppal"><img src="${platos[0].img_plato || ''}" alt="${platos[0].nombre}"></figure>`;
                 }
                 if (platos.length >= 2) {
-                    mosaico += `<figure class="img-menu-sec"><img src="${platos[1].img_plato || 'imagenes/rata.jfif'}" alt="${platos[1].nombre}" onerror="this.src='imagenes/rata.jfif'"></figure>`;
+                    mosaico += `<figure class="img-menu-sec"><img src="${platos[1].img_plato || ''}" alt="${platos[1].nombre}"></figure>`;
                 }
                 if (platos.length >= 3) {
-                    mosaico += `<figure class="img-menu-sec"><img src="${platos[2].img_plato || 'imagenes/rata.jfif'}" alt="${platos[2].nombre}" onerror="this.src='imagenes/rata.jfif'"></figure>`;
+                    mosaico += `<figure class="img-menu-sec"><img src="${platos[2].img_plato || ''}" alt="${platos[2].nombre}"></figure>`;
                 }
                 if (platos.length >= 4) {
-                    mosaico += `<figure class="img-menu-sec img-ancho-completo"><img src="${platos[3].img_plato || 'imagenes/rata.jfif'}" alt="${platos[3].nombre}" onerror="this.src='imagenes/rata.jfif'"></figure>`;
+                    mosaico += `<figure class="img-menu-sec img-ancho-completo"><img src="${platos[3].img_plato || ''}" alt="${platos[3].nombre}"></figure>`;
                 }
 
                 contenedor.innerHTML += `
