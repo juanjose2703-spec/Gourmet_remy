@@ -28,6 +28,10 @@ def busqueda():
 def detalle_plato(id_plato):
     return render_template('platos/templates/detalle_plato.html')
 
+@programa.route('/detalle_menu/<id_menu>')
+def detalle_menu(id_menu):
+    return render_template('menus/templates/detalle_menu.html')
+
 @programa.route('/buscar')
 def buscar():
     q = request.args.get('q', '')
