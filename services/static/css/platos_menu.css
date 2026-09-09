@@ -382,7 +382,7 @@ div#cont_acciones_pestanas {
 }
 
 /* Utilitarios */
-.letra-azul-dark { color: var(--azul-dark); }
+.letra-azul-dark { color: var(--negro); }
 .letra-negro { color: var(--negro); }
 .letra-verde { color: var(--verde); }
 .fondo-verde { background-color: var(--verde); }
