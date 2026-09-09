@@ -11,6 +11,15 @@ function inicializarBusquedaREMY() {
 
     const IMAGEN_DEFAULT = '../../static/img/dummy_remy.png';
 
+    // Función aux para resolver la ruta de la imagen (URL remota, archivo local en img_remy o Dummy)
+    function obtenerRutaImagen(img) {
+        if (!img || img.trim() === '') return IMAGEN_DEFAULT;
+        if (img.startsWith('http://') || img.startsWith('https://')) {
+            return img;
+        }
+        return `/img_remy/${img}`;
+    }
+
     async function buscar() {
         const q = inputBusqueda.value.trim();
 
@@ -31,7 +40,7 @@ function inicializarBusquedaREMY() {
 
             data.forEach(item => {
                 const fecha = item.fecha_creacion ? item.fecha_creacion.split('T')[0] : 'Sin fecha';
-                const rutaImagen = item.img_registro ? item.img_registro : IMAGEN_DEFAULT;
+                const rutaImagen = obtenerRutaImagen(item.img_registro);
 
                 contenedor.innerHTML += `
                     <article class="tarjeta-item-resultado" 
