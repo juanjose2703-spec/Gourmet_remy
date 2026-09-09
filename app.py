@@ -5,12 +5,20 @@ from buscarGeneral import buscarGeneral
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+# Ruta absoluta hacia la carpeta img_remy en xampp/htdocs
+IMG_REMY_DIR = r'C:\xampp\htdocs\img_remy'
+
 programa = Flask(
     __name__,
     template_folder=os.path.join(BASE_DIR, 'services', 'templates'),
     static_folder=os.path.join(BASE_DIR, 'services', 'static')
 )
 CORS(programa)
+
+# Ruta estática para servir las imágenes almacenadas localmente
+@programa.route('/img_remy/<path:filename>')
+def obtener_imagen_local(filename):
+    return send_from_directory(IMG_REMY_DIR, filename)
 
 @programa.route('/menus/static/<path:filename>')
 def menus_static(filename):

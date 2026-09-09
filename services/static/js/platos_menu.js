@@ -6,12 +6,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const secColMenu = document.getElementById('sec_col_menu');
     const mediaQueryPC = window.matchMedia('(min-width: 1020px)');
 
+    // Ruta de la imagen por defecto
+    const IMAGEN_DEFAULT = '/static/img/dummy_remy.png';
+
     // Función aux para recortar texto con puntos suspensivos
     function recortarTexto(texto, maxCaracteres) {
         if (!texto) return '';
         return texto.length > maxCaracteres 
             ? texto.substring(0, maxCaracteres).trim() + '...' 
             : texto;
+    }
+
+    // Función aux para resolver la ruta de la imagen (URL remota, Nombre local o Dummy)
+    function obtenerRutaImagen(img) {
+        if (!img || img.trim() === '') return IMAGEN_DEFAULT;
+        if (img.startsWith('http://') || img.startsWith('https://')) {
+            return img;
+        }
+        // Si es nombre local (ej: PLPF001.png), apunta a la ruta estática de Flask
+        return `/img_remy/${img}`;
     }
 
     function mostrarSeccion(seccionActivar) {
@@ -73,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const categorias = {1: 'Entrada', 2: 'Plato Fuerte', 3: 'Postre', 4: 'Bebida'};
                 const categoria = categorias[plato.categoria] || 'Sin categoría';
                 const fecha = plato.fecha_creacion ? plato.fecha_creacion.split('T')[0] : 'Sin fecha';
-                const imagen = plato.img_plato || '';
+                const imagen = obtenerRutaImagen(plato.img_plato);
                 const opacidad = plato.estado === 'Inactivo' ? 'style="opacity:0.4"' : '';
 
                 // Aplicación del recorte de texto
@@ -83,7 +96,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 contenedor.innerHTML += `
                     <a href="/detalle_plato/${plato.id_plato}" class="tarjeta-plato" ${opacidad}>
                         <figure class="foto-plato">
-                            <img src="${imagen}" alt="${plato.nombre}">
+                            <img src="${imagen}" 
+                                 alt="${plato.nombre}" 
+                                 onerror="this.src='${IMAGEN_DEFAULT}'">
                         </figure>
                         <div class="info-plato">
                             <h3 class="nombre-plato letra-azul-dark">${nombreFormateado}</h3>
@@ -117,16 +132,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 let mosaico = '';
                 if (platos.length >= 1) {
-                    mosaico += `<figure class="img-menu-ppal"><img src="${platos[0].img_plato || ''}" alt="${platos[0].nombre}"></figure>`;
+                    mosaico += `<figure class="img-menu-ppal"><img src="${obtenerRutaImagen(platos[0].img_plato)}" alt="${platos[0].nombre}" onerror="this.src='${IMAGEN_DEFAULT}'"></figure>`;
+                } else {
+                    // Mosaico por defecto si no hay platos asociados al menú
+                    mosaico += `<figure class="img-menu-ppal"><img src="${IMAGEN_DEFAULT}" alt="Menú sin plato"></figure>`;
                 }
+
                 if (platos.length >= 2) {
-                    mosaico += `<figure class="img-menu-sec"><img src="${platos[1].img_plato || ''}" alt="${platos[1].nombre}"></figure>`;
+                    mosaico += `<figure class="img-menu-sec"><img src="${obtenerRutaImagen(platos[1].img_plato)}" alt="${platos[1].nombre}" onerror="this.src='${IMAGEN_DEFAULT}'"></figure>`;
                 }
                 if (platos.length >= 3) {
-                    mosaico += `<figure class="img-menu-sec"><img src="${platos[2].img_plato || ''}" alt="${platos[2].nombre}"></figure>`;
+                    mosaico += `<figure class="img-menu-sec"><img src="${obtenerRutaImagen(platos[2].img_plato)}" alt="${platos[2].nombre}" onerror="this.src='${IMAGEN_DEFAULT}'"></figure>`;
                 }
                 if (platos.length >= 4) {
-                    mosaico += `<figure class="img-menu-sec img-ancho-completo"><img src="${platos[3].img_plato || ''}" alt="${platos[3].nombre}"></figure>`;
+                    mosaico += `<figure class="img-menu-sec img-ancho-completo"><img src="${obtenerRutaImagen(platos[3].img_plato)}" alt="${platos[3].nombre}" onerror="this.src='${IMAGEN_DEFAULT}'"></figure>`;
                 }
 
                 contenedor.innerHTML += `
