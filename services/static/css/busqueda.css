@@ -39,7 +39,7 @@ header#cabezote_sesion {
     align-items: center;
     justify-content: space-between;
     padding: 0 16px;
-    height: 52px;
+    height: 56px;
     width: 100%;
 }
 
@@ -75,7 +75,7 @@ header#cabezote_sesion {
 
 .txt-cabezote {
     color: var(--blanco);
-    font-size: 1.25rem;
+    font-size: 1.8rem;
     font-weight: 800;
     letter-spacing: 0.3px;
 }
@@ -227,6 +227,42 @@ section#cuerpo_ppal_cont {
     margin-top: auto;
 }
 
+/* MENÚ DESPLEGABLE MINIMALISTA DE FILTROS */
+.menu-filtro-desplegable {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0.5rem;
+    width: 180px;
+    background-color: var(--blanco);
+    border: 1px solid #CCC;
+    border-radius: 14px;
+    z-index: 100;
+    overflow: hidden;
+}
+
+.menu-filtro-desplegable ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.opcion-filtro {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--negro);
+    cursor: pointer;
+}
+
+.opcion-filtro:not(:last-child) {
+    border-bottom: 1px solid var(--gris);
+}
+
+.opcion-filtro:hover {
+    background-color: #EAEAEA;
+    color: var(--verde);
+}
+
 /* Estado Vacío */
 #sin_resultados_msj {
     text-align: center;
@@ -234,6 +270,36 @@ section#cuerpo_ppal_cont {
     font-size: 0.95rem;
     font-weight: 600;
     color: #666;
+}
+
+.cont-sin-resultados {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem 1rem;
+    gap: 0.6rem;
+    width: 100%;
+    margin: auto 0;
+}
+
+.img-dummy-empty {
+    width: 120px;
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.txt-sin-resultados {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--gris-dark);
+    text-align: center;
+    margin: 0;
+}
+
+.ico-hambur-svg {
+    display: none;
 }
 
 .oculto {
@@ -289,6 +355,10 @@ section#cuerpo_ppal_cont {
     
     main#gran_padre_cont {
         max-width: 100%;
+    }
+
+    .txt-cabezote {
+        font-size: 2.1rem;
     }
 
     section#cuerpo_ppal_cont {

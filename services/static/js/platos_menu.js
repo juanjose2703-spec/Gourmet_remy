@@ -6,6 +6,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const secColMenu = document.getElementById('sec_col_menu');
     const mediaQueryPC = window.matchMedia('(min-width: 1020px)');
 
+    // Función aux para recortar texto con puntos suspensivos
+    function recortarTexto(texto, maxCaracteres) {
+        if (!texto) return '';
+        return texto.length > maxCaracteres 
+            ? texto.substring(0, maxCaracteres).trim() + '...' 
+            : texto;
+    }
+
     function mostrarSeccion(seccionActivar) {
         if (mediaQueryPC.matches) return;
 
@@ -68,14 +76,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 const imagen = plato.img_plato || '';
                 const opacidad = plato.estado === 'Inactivo' ? 'style="opacity:0.4"' : '';
 
+                // Aplicación del recorte de texto
+                const nombreFormateado = recortarTexto(plato.nombre.toUpperCase(), 30);
+                const descripcionFormateada = recortarTexto(plato.descripcion, 90);
+
                 contenedor.innerHTML += `
                     <a href="/detalle_plato/${plato.id_plato}" class="tarjeta-plato" ${opacidad}>
                         <figure class="foto-plato">
                             <img src="${imagen}" alt="${plato.nombre}">
                         </figure>
                         <div class="info-plato">
-                            <h3 class="nombre-plato letra-azul-dark">${plato.nombre.toUpperCase()}</h3>
-                            <p class="desc-plato">${plato.descripcion}</p>
+                            <h3 class="nombre-plato letra-azul-dark">${nombreFormateado}</h3>
+                            <p class="desc-plato">${descripcionFormateada}</p>
                             <p class="meta-plato">Categoría: <strong>${categoria}</strong></p>
                             <p class="meta-plato">Fecha creación: <strong>${fecha}</strong></p>
                         </div>
@@ -100,6 +112,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const opacidad = menu.estado === 'Inactivo' ? 'style="opacity:0.4"' : '';
                 const precio = menu.precio ? `$${menu.precio.toLocaleString('es-CO')}` : '$0';
 
+                // Aplicación del recorte de texto para el título del menú
+                const tituloMenuFormateado = recortarTexto(menu.nombre, 30);
+
                 let mosaico = '';
                 if (platos.length >= 1) {
                     mosaico += `<figure class="img-menu-ppal"><img src="${platos[0].img_plato || ''}" alt="${platos[0].nombre}"></figure>`;
@@ -120,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             ${mosaico}
                         </div>
                         <div class="info-tarjeta-menu">
-                            <h4 class="titulo-menu letra-negro">${menu.nombre}</h4>
+                            <h4 class="titulo-menu letra-negro">${tituloMenuFormateado}</h4>
                             <span class="precio-menu letra-verde">${precio}</span>
                         </div>
                     </a>
