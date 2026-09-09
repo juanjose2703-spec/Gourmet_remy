@@ -1,4 +1,5 @@
 from conexion import *
+from flask_cors import CORS
 from platos import mis_platos
 from consultarPlatos import consultarPlatos
 from consultarPlatosId import consultarPlatosId
@@ -7,6 +8,7 @@ from modificarPlatos import modificarPlatos
 from consultarIngrediente import consultarIngrediente
 
 programa = Flask(__name__)
+CORS(programa)
 api = Api(programa)
 
 class ListaPlatos(Resource):

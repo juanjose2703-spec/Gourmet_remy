@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Búsqueda | REMY 1.0</title>
+    
+    <link rel="stylesheet" href="../static/css/normalize.css">
+    <link rel="stylesheet" href="../static/css/busqueda.css">
+</head>
+<body>
+
+    <div id="gran_padre_cont">
+        
+        <!-- CABEZOTE SUPERIOR -->
+        <header id="cabezote_seccion_ppal">
+            <svg id="btn_menu_movil" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor">
+                <path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"/>
+            </svg>
+            <h2 id="titulo_vista_ppal">Búsqueda</h2>
+            <a href="platos_menu.html" id="btn_cerrar_vista" title="Cerrar">✕</a>
+        </header>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main id="cuerpo_ppal_cont">
+            
+            <!-- BARRA DE BÚSQUEDA Y FILTRO -->
+            <section id="sec_barra_busqueda">
+                <div class="caja-campo-busqueda">
+                    <input type="text" id="input_busqueda" class="input-texto-busqueda" placeholder="Buscar por título, categoría o ingrediente..." value="" autocomplete="off">
+                    
+                    <div class="cont-iconos-busqueda">
+                        <!-- Icono Lupa (Búsqueda) -->
+                        <button type="button" class="btn-icono-accion" id="btn_ejecutar_busqueda" title="Buscar">
+                            <svg class="ico-accion-svg" viewBox="0 0 256 256" fill="currentColor">
+                                <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/>
+                            </svg>
+                        </button>
+                        
+                        <!-- Separador visual fino -->
+                        <span class="separador-iconos"></span>
+
+                        <!-- Icono Filtro -->
+                        <button type="button" class="btn-icono-accion" id="btn_abrir_filtro" title="Filtrar">
+                            <svg class="ico-accion-svg" viewBox="0 0 256 256" fill="currentColor">
+                                <path d="M230.6,49.53A15.81,15.81,0,0,0,216,40H40A16,16,0,0,0,28.19,66.76l.08.09L96,139.17V216a16,16,0,0,0,24.87,13.32l32-21.33A16,16,0,0,0,160,194.67V139.17l67.73-72.32.08-.09A15.8,15.8,0,0,0,230.6,49.53Z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- GRILLA DE RESULTADOS DE BÚSQUEDA -->
+            <section id="sec_lista_resultados" class="lista-tarjetas-grid">
+                
+                <!-- Tarjeta 1 -->
+                <article class="tarjeta-plato" data-titulo="carne de cordero" data-categoria="menú">
+                    <figure class="foto-plato">
+                        <img src="https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=600&auto=format&fit=crop" alt="Carne de Cordero">
+                    </figure>
+                    <div class="info-plato">
+                        <h3 class="nombre-plato letra-azul-dark">CARNE DE CORDERO</h3>
+                        <p class="desc-plato">Platillo francés "Ratatouille" con capas de berenjena, calabacín y tomate sobre salsa de tomate y albahaca, acompañado por un...</p>
+                        <p class="meta-plato">Categoría: <strong>Menú</strong></p>
+                        <p class="meta-plato">Fecha creación: <strong>20/05/26</strong></p>
+                    </div>
+                </article>
+
+                <!-- Tarjeta 2 -->
+                <article class="tarjeta-plato" data-titulo="café" data-categoria="plato">
+                    <figure class="foto-plato">
+                        <img src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?q=80&w=600&auto=format&fit=crop" alt="Café">
+                    </figure>
+                    <div class="info-plato">
+                        <h3 class="nombre-plato letra-azul-dark">CAFÉ</h3>
+                        <p class="desc-plato">Bebida aromática y estimulante obtenida a partir de las semillas tostadas y molidas del fruto del cafeto...</p>
+                        <p class="meta-plato">Categoría: <strong>Plato</strong></p>
+                        <p class="meta-plato">Fecha creación: <strong>20/05/26</strong></p>
+                    </div>
+                </article>
+
+                <!-- Tarjeta 3 -->
+                <article class="tarjeta-plato" data-titulo="camarón" data-categoria="ingrediente">
+                    <figure class="foto-plato">
+                        <img src="https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?q=80&w=600&auto=format&fit=crop" alt="Camarón">
+                    </figure>
+                    <div class="info-plato">
+                        <h3 class="nombre-plato letra-azul-dark">CAMARÓN</h3>
+                        <p class="desc-plato">El camarón es un crustáceo decápodo acuático, apreciado mundialmente por su sabor suave y textura firme...</p>
+                        <p class="meta-plato">Categoría: <strong>Ingrediente</strong></p>
+                        <p class="meta-plato">Fecha creación: <strong>20/05/26</strong></p>
+                    </div>
+                </article>
+
+                <!-- Tarjeta 4 -->
+                <article class="tarjeta-plato" data-titulo="empanada" data-categoria="entrada">
+                    <figure class="foto-plato">
+                        <img src="https://images.unsplash.com/photo-1626700051175-6818013e1d4f?q=80&w=600&auto=format&fit=crop" alt="Empanada">
+                    </figure>
+                    <div class="info-plato">
+                        <h3 class="nombre-plato letra-azul-dark">BURRITO</h3>
+                        <p class="desc-plato">Burrito colombiano lleno de sabor...</p>
+                        <p class="meta-plato">Categoría: <strong>Entrada</strong></p>
+                        <p class="meta-plato">Fecha creación: <strong>20/05/26</strong></p>
+                    </div>
+                </article>
+
+                <!-- Tarjeta 5 -->
+                <article class="tarjeta-plato" data-titulo="brawnie magico brownie" data-categoria="postre">
+                    <figure class="foto-plato">
+                        <img src="https://images.unsplash.com/photo-1606313564200-e75d5e30476c?q=80&w=600&auto=format&fit=crop" alt="Brownie Mágico">
+                    </figure>
+                    <div class="info-plato">
+                        <h3 class="nombre-plato letra-azul-dark">BRAWNIE MAGICO</h3>
+                        <p class="desc-plato">Es un pequeño bizcocho de chocolate de origen estadounidense, caracterizado por su interior denso...</p>
+                        <p class="meta-plato">Categoría: <strong>Postre</strong></p>
+                        <p class="meta-plato">Fecha creación: <strong>20/05/26</strong></p>
+                    </div>
+                </article>
+
+                <!-- Tarjeta 6 -->
+                <article class="tarjeta-plato" data-titulo="papaya" data-categoria="ingrediente">
+                    <figure class="foto-plato">
+                        <img src="https://images.unsplash.com/photo-1617112848923-cc2234396a8d?q=80&w=600&auto=format&fit=crop" alt="Papaya">
+                    </figure>
+                    <div class="info-plato">
+                        <h3 class="nombre-plato letra-azul-dark">PAPAYA</h3>
+                        <p class="desc-plato">Es una fruta tropical jugosa, de sabor dulce, pulpa blanda de color anaranjado y numerosas semillas negras...</p>
+                        <p class="meta-plato">Categoría: <strong>Ingrediente</strong></p>
+                        <p class="meta-plato">Fecha creación: <strong>20/05/26</strong></p>
+                    </div>
+                </article>
+
+            </section>
+
+            <!-- MENSAJE SI NO HAY RESULTADOS -->
+            <div id="sin_resultados_msj" class="oculto">
+                <p>No se encontraron coincidencia con tu búsqueda.</p>
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- Vinculación del JavaScript -->
+    <script src="../static/js/busqueda_remy.js" defer></script>
+</body>
+</html>

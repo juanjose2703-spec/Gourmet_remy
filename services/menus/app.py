@@ -1,4 +1,5 @@
 from conexion import *
+from flask_cors import CORS
 from menus import mis_menus
 from consultarMenu import consultarMenu
 from consultarMenuId import consultarMenuId
@@ -6,6 +7,7 @@ from insertarMenu import insertarMenu
 from modificarMenu import modificarMenu
 
 programa = Flask(__name__)
+CORS(programa)
 api = Api(programa)
 
 class ListaMenus(Resource):

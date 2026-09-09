@@ -1,0 +1,581 @@
+@font-face {
+    font-family: 'sena-calibri';
+    src: url('../rm_componentes/calibri.eot');
+    src: url('../rm_componentes/calibri.eot') format('embedded-opentype'),
+        url('../rm_componentes/calibri.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'sena-worksans';
+    src: url('../rm_componentes/worksans.eot');
+    src: url('../rm_componentes/worksans.eot') format('embedded-opentype'),
+        url('../rm_componentes/worksans.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+    box-sizing: border-box;
+    transition: none;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+    display: block;
+}
+
+figure {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+figure img, figure svg {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    border: none;
+}
+
+:root {
+    --amarillo: #FFDE59;
+    --azul-dark: #00304D;
+    --azul-lite: #C8D7F5;
+    --blanco: rgb(252,252,252);
+    --gris: #EFEFEF;
+    --gris-dark: #545454;
+    --naranja: #FF914D;
+    --negro: #111111;
+    --purpura: #8A2BE2;
+    --rojo: #FF3131;
+    --rojo-lite: #f48888;
+    --verde: #00A82D;
+    --verde-lite: #90C487;
+}
+
+/* Base de Documento */
+html, body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--blanco);
+    font-family: 'sena-worksans', sans-serif;
+    font-size: 21px;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Gran Contenedor Padre */
+main#gran_cont_ppal {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: flex-start;
+    align-items: stretch;
+    overflow: hidden;
+}
+
+/* Sidebar Oculto por defecto en Móvil */
+aside#barra_lateral_nav {
+    display: none;
+}
+
+/* Área Derecha de Contenido */
+section#cont_derecho_contenido {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+}
+
+/* Cabezote Azul Superior */
+header#cabezote_seccion_ppal {
+    background-color: var(--azul-dark);
+    color: var(--blanco);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.2rem;
+    height: 56px;
+    flex-shrink: 0;
+}
+
+#btn_menu_movil {
+    width: 26px;
+    height: 26px;
+    cursor: pointer;
+}
+
+#titulo_vista_ppal {
+    font-size: 1.15rem;
+    margin: 0;
+    text-align: center;
+    flex: 1;
+    font-weight: 700;
+}
+
+#btn_cerrar_vista {
+    color: var(--blanco);
+    font-size: 1.3rem;
+    text-decoration: none;
+    display: none;
+    cursor: pointer;
+}
+
+/* Navegación por Pestañas Móvil */
+nav#nav_pestanas_ppal {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1.2rem;
+    height: 48px;
+    flex-shrink: 0;
+    background-color: var(--blanco);
+}
+
+.btn-ico-nav {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    width: 22px;
+    height: 22px;
+    color: var(--negro);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+div#cont_selector_pestanas {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    margin-left: 0.5rem; 
+}
+
+div#cont_acciones_pestanas {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.btn-pestana {
+    background: none;
+    border: none;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    padding: 0;
+    color: var(--negro);
+}
+
+.btn-pestana.activa {
+    color: var(--verde) !important;
+    border-bottom: none;
+}
+
+.linea_vert_pesta {
+    width: 1.5px;
+    height: 20px;
+    background-color: #CCC;
+}
+
+/* Grid de Contenido (Platos y Menús) */
+#grid_dos_columnas {
+    display: flex;
+    flex: 1;
+    height: calc(100vh - 104px);
+    position: relative;
+    overflow: hidden;
+}
+
+.columna-vista {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 0.6rem 0.8rem;
+    min-height: 0;
+}
+
+.cont-scroll-interno {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 80px;
+    min-height: 0;
+}
+
+.header-columna-pc {
+    display: none;
+}
+
+.oculto-movil {
+    display: none !important;
+}
+
+/* ==========================================================================
+   ESTILOS DE TARJETAS
+   ========================================================================== */
+.lista-tarjetas-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* --- Tarjeta Menú --- */
+.tarjeta-menu-compuesta {
+    background-color: #EAEAEA;
+    border-radius: 18px;
+    padding: 0.65rem;
+    text-decoration: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    box-shadow: none;
+    border: none;
+}
+
+/* Grid Mosaico Exacto:
+   Columna 1: 2fr (50% Ancho Total) -> Foto Principal
+   Columna 2 y 3: 1fr cada una (25% + 25%) -> Fotos secundarias
+*/
+.mosaico-imagenes-menu {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-rows: repeat(2, 68px);
+    gap: 0.4rem;
+    width: 100%;
+}
+
+/* Foto Principal (50% de la tarjeta a la izquierda) */
+.img-menu-ppal {
+    grid-column: 1 / 2;
+    grid-row: 1 / span 2;
+    border-radius: 16px;
+    overflow: hidden;
+    margin: 0;
+}
+
+/* Fotos secundarias cuadradas (Arriba a la derecha) */
+.img-menu-sec {
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 0;
+}
+
+/* Foto Alargada (Abajo a la derecha ocupando ambas mini columnas) */
+.img-ancho-completo {
+    grid-column: 2 / span 2;
+    grid-row: 2 / 3;
+}
+
+.img-menu-ppal img, .img-menu-sec img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.con-borde-purpura {
+    border: 2px solid var(--purpura);
+}
+
+.info-tarjeta-menu {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.5rem;
+    padding: 0 0.2rem 0.1rem 0.2rem;
+}
+
+.titulo-menu {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.precio-menu {
+    font-weight: normal; /* Sin bold según indicación */
+    font-size: 0.95rem;   /* Tamaño reducido */
+    letter-spacing: -0.3px;
+}
+
+/* --- Tarjeta Plato --- */
+.tarjeta-plato {
+    background-color: #EAEAEA;
+    border-radius: 18px;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: row;
+    gap: 0.7rem;
+    align-items: center;
+    text-decoration: none;
+    cursor: pointer;
+    width: 100%;
+    border: none;
+    box-shadow: none;
+}
+
+.tarjeta-plato figure.foto-plato {
+    width: 100px;
+    height: 100px;
+    border-radius: 14px;
+    overflow: hidden;
+    flex-shrink: 0;
+    margin: 0;
+}
+
+.tarjeta-plato figure.foto-plato img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.tarjeta-plato div.info-plato {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+}
+
+.tarjeta-plato h3.nombre-plato {
+    margin: 0 0 0.2rem 0;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+.tarjeta-plato p.desc-plato {
+    margin: 0 0 0.3rem 0;
+    font-size: 0.58rem;
+    color: var(--gris-dark);
+    line-height: 1.2;
+}
+
+.tarjeta-plato p.meta-plato {
+    margin: 0;
+    font-size: 0.55rem;
+    color: var(--negro);
+}
+
+/* Botón Flotante (+ Add) */
+.btn-agregar-flotante {
+    position: absolute;
+    bottom: 20px;
+    right: 18px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    box-shadow: none;
+    cursor: pointer;
+    text-decoration: none;
+    border: none;
+}
+
+.btn-agregar-flotante svg {
+    width: 26px;
+    height: 26px;
+}
+
+/* Utilitarios */
+.letra-azul-dark { color: var(--azul-dark); }
+.letra-negro { color: var(--negro); }
+.letra-verde { color: var(--verde); }
+.fondo-verde { background-color: var(--verde); }
+.letra-blanca { color: var(--blanco); }
+
+
+/* ==========================================================================
+   MEDIA QUERIES - VISTA PC (min-width: 1020px)
+   ========================================================================== */
+@media screen and (min-width: 1020px) {
+
+    aside#barra_lateral_nav {
+        background: var(--blanco);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        flex-basis: 70px;
+        min-width: 85px;
+        height: 100vh;
+        padding: 18px 0;
+        border-right: 1px solid #DDD;
+        flex-shrink: 0;
+        z-index: 10;
+    }
+
+    aside#barra_lateral_nav figure#marca_remy_lat {
+        margin-left: 0;
+        width: 70px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    aside#barra_lateral_nav figure#marca_remy_lat img {
+        width: 100%;
+        height: auto;
+    }
+
+    aside#barra_lateral_nav nav#menu_iconos_lat {
+        height: 250px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    aside#barra_lateral_nav nav#menu_iconos_lat .btn-ico-lat {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        color: var(--negro);
+        cursor: pointer;
+    }
+
+    aside#barra_lateral_nav nav#menu_iconos_lat .btn-ico-lat svg {
+        width: 30px;
+        height: 30px;
+    }
+
+    aside#barra_lateral_nav nav#menu_iconos_lat .btn-ico-lat.activo {
+        color: var(--verde);
+    }
+
+    aside#barra_lateral_nav div#firma_codigo_lat {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 30px;
+        height: 30px;
+        font-weight: bold;
+        color: var(--negro);
+        font-size: 1.1rem;
+    }
+
+    section#cont_derecho_contenido {
+        flex-basis: 100%;
+        height: 100vh;
+    }
+
+    #btn_menu_movil, nav#nav_pestanas_ppal {
+        display: none !important;
+    }
+
+    #btn_cerrar_vista {
+        display: block;
+    }
+
+    #titulo_vista_ppal {
+        font-size: 1.6rem;
+    }
+
+    #grid_dos_columnas {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        height: calc(100vh - 56px);
+        overflow: hidden;
+    }
+
+    .columna-vista {
+        display: flex !important;
+        flex-direction: column;
+        padding: 0 1.2rem 1rem 1.2rem;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+
+    #sec_col_platos {
+        border-right: 2px solid #E5E5E5;
+    }
+
+    .header-columna-pc {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0.8rem 0 0.6rem 0;
+        background-color: var(--blanco);
+        flex-shrink: 0;
+    }
+
+    .subtitulo-col-pc {
+        text-align: center;
+        font-size: 1.3rem;
+        margin: 0 0 0.4rem 0;
+        color: var(--negro);
+        font-weight: bold;
+    }
+
+    .linea-separadora-header {
+        width: 100%;
+        height: 1px;
+        background-color: #DDD;
+    }
+
+    .cont-scroll-interno {
+        flex: 1;
+        overflow-y: auto;
+        padding-bottom: 80px;
+        padding-top: 0.5rem;
+    }
+
+    .lista-tarjetas-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .tarjeta-plato {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 0.8rem;
+        border-radius: 20px;
+    }
+
+    .tarjeta-plato figure.foto-plato {
+        width: 100%;
+        height: 135px;
+        border-radius: 16px;
+        margin-bottom: 0.5rem;
+    }
+
+    .tarjeta-plato div.info-plato {
+        text-align: left;
+    }
+
+    .tarjeta-plato h3.nombre-plato {
+        font-size: 0.9rem;
+        margin-bottom: 0.2rem;
+    }
+
+    .tarjeta-plato p.desc-plato {
+        font-size: 0.62rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .tarjeta-plato p.meta-plato {
+        font-size: 0.58rem;
+    }
+
+    .btn-agregar-flotante {
+        position: absolute;
+        bottom: 25px;
+        right: 40px;
+        width: 55px;
+        height: 55px;
+        z-index: 10;
+    }
+}
