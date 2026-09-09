@@ -1,7 +1,7 @@
 """
 Búsqueda unificada en Platos, Menús e Ingredientes usando UNION ALL.
 """
-from dbremy import conn
+from dbremy import *
 import json
 
 def buscarGeneral(q: str) -> str:
@@ -109,11 +109,11 @@ def buscarGeneral(q: str) -> str:
         """
         params = ()
 
-    cursor = conn.cursor()
+    # cursor = conn.cursor()
     cursor.execute(sql, params)
     columnas = [col[0] for col in cursor.description]
     resultado = cursor.fetchall()
-    cursor.close()
+    # cursor.close()
 
     resultados = []
     for row in resultado:
