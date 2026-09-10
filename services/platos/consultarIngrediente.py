@@ -20,19 +20,23 @@ def consultarIngrediente(id_plato: str) -> str:
         INNER JOIN Ingredientes i ON pi.id_ingrediente = i.id_ingrediente
         WHERE pi.id_plato = %s
     """
-    cursor = conn.cursor()
-    cursor.execute(sql, (id_plato,))
-    resultado = cursor.fetchall()
-    cursor.close()
+    try:
+        cursor = conn.cursor()
+        cursor.execute(sql, (str(id_plato).strip(),))
+        resultado = cursor.fetchall()
+        cursor.close()
 
-    ingredientes = []
-    for row in resultado:
-        ingredientes.append({
-            "id_ingrediente": row[0],
-            "nombre":         row[1],
-            "stock":          int(row[2]),
-            "cantidad":       int(row[3]),
-            "unidad":         row[4]
-        })
+        ingredientes = []
+        for row in resultado:
+            ingredientes.append({
+                "id_ingrediente": row[0],
+                "nombre":         row[1] if row[1] else "Sin nombre",
+                "stock":          float(row[2]) if row[2] is not None else 0,
+                "cantidad":       float(row[3]) if row[3] is not None else 0,
+                "unidad":         row[4] if row[4] else ""
+            })
 
-    return json.dumps(ingredientes, ensure_ascii=False)
+        return json.dumps(ingredientes, ensure_ascii=False)
+    except Exception as e:
+        print(f"Error al consultar ingredientes para el plato {id_plato}: {e}")
+        return json.dumps([])
