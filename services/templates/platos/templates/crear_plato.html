@@ -3,97 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Añadir Plato | REMY 1.0</title>
-    
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/crear_plato.css') }}">
-    <script src="{{ url_for('static', filename='js/interacciones.js') }}" defer></script>
+    <title>Insertar Plato | REMY</title>
+    <link rel="stylesheet" href="/platos/static/css/modificar_plato.css">
 </head>
-<body id="cuerpo_crear_plato">
+<body id="cuerpo_modificar_plato">
 
-    <main id="contenedor_crear_plato">
-        <header id="cabecera_crear_plato">
+    <main id="contenedor_modificar_plato">
+        <header id="cabecera_modificar_plato">
             <div class="contenido-header">
-                <svg id="btn_menu_movil_form" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor">
+                <svg id="btn_menu_movil_form" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
                     <path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"/>
                 </svg>
-                <h2 id="titulo_vista_form">Añadir Plato</h2>
+                
+                <h2 id="titulo_vista_form">Insertar Plato</h2>
+                
                 <a href="/platos_menu" id="btn_cerrar_form" title="Cerrar">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
                         <path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/>
                     </svg>
                 </a>
             </div>
         </header>
-    <form id="form_anadir_plato" class="contenedor-form">
-        <div class="contenedor-columnas-form">
-            <section class="bloque-gris">
-                <div class="campo-form fila-imagen">
-                    <label for="input_foto">Subir Imagen</label>
-                    <div class="box-preview-img">
-                        <input type="file" id="input_foto" accept="image/*" onchange="REMY.previewImagen(event)">
-                        <img id="img_preview" src="imagenes/ceviche.jpg" alt="Vista previa de la receta">
-                    </div>
-                </div>
-                <div class="campo-form">
-                    <label for="input_nombre">Nombre</label>
-                    <input type="text" id="input_nombre" class="input-redondeado" placeholder="Ej: Ceviche">
-                </div>
-                <div class="campo-form fila-textarea">
-                    <label for="input_descripcion">Descripción</label>
-                    <textarea id="input_descripcion" class="input-redondeado" rows="3" placeholder="Descripción del platillo..."></textarea>
-                </div>
-                <div class="campo-form">
-                    <label for="input_categoria">Categoría</label>
-                    <input type="text" id="input_categoria" class="input-redondeado input-select" readonly onclick="REMY.abrirModal('modal_categoria')" placeholder="Seleccionar...">
-                </div>
-            </section>
-            <div class="columna-ingredientes">
+
+        <form id="form_anadir_plato" class="contenedor-form">
+            <div class="contenedor-columnas-form">
                 
                 <section class="bloque-gris">
-                    <div id="contenedor_ingredientes">
-                        <div class="campo-form item-ingrediente">
-                            <label>Ingrediente 1</label>
-                            <input type="text" class="input-redondeado input-ingrediente" readonly placeholder="Seleccionar..." onclick="REMY.abrirModal('modal_ingredientes')">
+                    <div class="campo-form fila-imagen">
+                        <label for="input_foto">Subir Imagen</label>
+                        <div class="box-preview-img">
+                            <input type="file" id="input_foto" name="imagen" accept="image/*">
+                            <img id="img_preview" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22150%22%20height%3D%22150%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%23cccccc%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22%23555555%22%20text-anchor%3D%22middle%22%20dy%3D%22.3em%22%3ESeleccionar%20Imagen%3C%2Ftext%3E%3C%2Fsvg%3E" alt="Vista previa">
                         </div>
-                        <div class="campo-form item-ingrediente">
-                            <label>Ingrediente 2</label>
-                            <input type="text" class="input-redondeado input-ingrediente" readonly placeholder="Seleccionar..." onclick="REMY.abrirModal('modal_ingredientes')">
-                        </div>
+                    </div>
+
+                    <div class="campo-form">
+                        <label for="input_nombre">Nombre</label>
+                        <input type="text" id="input_nombre" name="nombre" class="input-redondeado" placeholder="Ej: Ceviche" required>
+                    </div>
+
+                    <div class="campo-form fila-textarea">
+                        <label for="input_descripcion">Descripción</label>
+                        <textarea id="input_descripcion" name="descripcion" class="input-redondeado" rows="3" placeholder="Descripción del platillo..." required></textarea>
+                    </div>
+
+                    <div class="campo-form">
+                        <label for="input_categoria">Categoría</label>
+                        <input type="text" id="input_categoria" name="categoria" class="input-redondeado input-select" readonly placeholder="Seleccionar..." required>
                     </div>
                 </section>
-                <div class="controles-ingredientes">
-                    <span class="label-ingredientes">Ingredientes</span>
-                    <div class="botones-mas-menos">
-                        <button type="button" class="btn-ctrl fondo-verde" onclick="REMY.removerIngrediente()" aria-label="Quitar ingrediente">-</button>
-                        <button type="button" class="btn-ctrl fondo-verde" onclick="REMY.agregarIngrediente()" aria-label="Agregar ingrediente">+</button>
+
+                <div class="columna-ingredientes">
+                    <section class="bloque-gris">
+                        <div id="contenedor_ingredientes">
+                            <div class="campo-form item-ingrediente">
+                                <label>Ingrediente 1</label>
+                                <input type="hidden" name="ingredientes[]" class="input-ingrediente-id">
+                                <input type="text" class="input-redondeado input-ingrediente-nombre" readonly placeholder="Seleccionar...">
+                            </div>
+                            <div class="campo-form item-ingrediente">
+                                <label>Ingrediente 2</label>
+                                <input type="hidden" name="ingredientes[]" class="input-ingrediente-id">
+                                <input type="text" class="input-redondeado input-ingrediente-nombre" readonly placeholder="Seleccionar...">
+                            </div>
+                        </div>
+                    </section>
+
+                    <div class="controles-ingredientes">
+                        <span class="label-ingredientes">Ingredientes</span>
+                        <div class="botones-mas-menos">
+                            <button type="button" id="btn_quitar_ingrediente" class="btn-ctrl fondo-verde">-</button>
+                            <button type="button" id="btn_agregar_ingrediente" class="btn-ctrl fondo-verde">+</button>
+                        </div>
                     </div>
                 </div>
+
             </div>
-        </div>
-        <button type="submit" class="btn-submit fondo-verde letra-blanca">Añadir Plato</button>
-    </form>
+
+            <button type="submit" id="btn_submit_plato" class="btn-submit fondo-verde letra-blanca">Añadir Plato</button>
+        </form>
+
         <dialog id="modal_categoria" class="modal-overlay">
             <div class="modal-contenido">
                 <h3>Selecciona una Categoría</h3>
-                <ul class="lista-opciones-modal">
-                    <li onclick="REMY.seleccionarCategoria('Plato Fuerte')">Plato Fuerte</li>
-                    <li onclick="REMY.seleccionarCategoria('Entrada')">Entrada</li>
-                    <li onclick="REMY.seleccionarCategoria('Postre')">Postre</li>
-                    <li onclick="REMY.seleccionarCategoria('Bebida')">Bebida</li>
+                <ul class="lista-opciones-modal" id="lista_categorias">
+                    <li data-valor="Entrada">Entrada</li>
+                    <li data-valor="Plato Fuerte">Plato Fuerte</li>
+                    <li data-valor="Postre">Postre</li>
+                    <li data-valor="Bebida">Bebida</li>
                 </ul>
-                <button type="button" class="btn-cerrar-modal" onclick="REMY.cerrarModal('modal_categoria')">Cancelar</button>
+                <button type="button" class="btn-cerrar-modal" id="btn_cerrar_modal_cat">Cancelar</button>
             </div>
         </dialog>
+
         <dialog id="modal_ingredientes" class="modal-overlay">
             <div class="modal-contenido">
-                <h3>Buscador de Ingredientes</h3>
-                <p class="texto-modal-vacio">Aún no hay ingredientes registrados para seleccionar.</p>
-                <button type="button" class="btn-cerrar-modal" onclick="REMY.cerrarModal('modal_ingredientes')">Cerrar</button>
+                <h3>Seleccionar Ingrediente</h3>
+                <ul class="lista-opciones-modal" id="lista_ingredientes"></ul>
+                <button type="button" class="btn-cerrar-modal" id="btn_cerrar_modal_ing">Cerrar</button>
             </div>
         </dialog>
-
     </main>
 
+    <script src="/platos/static/js/crear_plato.js"></script>
 </body>
 </html>
