@@ -5,6 +5,33 @@ Trae los ingredientes de un plato específico desde plato_ingrediente.
 from dbremy import conn
 import json
 
+def consultarTodosIngredientes() -> str:
+    sql = """
+        SELECT 
+            id_ingrediente, 
+            nombre, 
+            unidad_minima AS unidad 
+        FROM Ingredientes
+    """
+    try:
+        cursor = conn.cursor()
+        cursor.execute(sql)
+        resultado = cursor.fetchall()
+        cursor.close()
+
+        ingredientes = []
+        for row in resultado:
+            ingredientes.append({
+                "id_ingrediente": row[0],
+                "nombre":         row[1] if row[1] else "Sin nombre",
+                "unidad":         row[2] if row[2] else "gr"
+            })
+
+        return json.dumps(ingredientes, ensure_ascii=False)
+    except Exception as e:
+        print(f"Error al consultar lista general de ingredientes: {e}")
+        return json.dumps([])
+
 def consultarIngrediente(id_plato: str) -> str:
     if not id_plato:
         return json.dumps([])
@@ -40,3 +67,5 @@ def consultarIngrediente(id_plato: str) -> str:
     except Exception as e:
         print(f"Error al consultar ingredientes para el plato {id_plato}: {e}")
         return json.dumps([])
+
+    

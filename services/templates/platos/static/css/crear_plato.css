@@ -152,6 +152,50 @@ svg#btn_menu_movil_form {
     text-overflow: ellipsis;
 }
 
+/* Envoltorio con Botón Limpiar (X) estilo modificar_menu */
+.cont-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.cont-input-wrapper .input-redondeado {
+    padding-right: 2.2rem;
+}
+
+.btn-limpiar {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--gris-dark);
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    z-index: 2;
+    padding: 0;
+}
+
+.btn-limpiar:hover {
+    color: var(--rojo);
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.btn-limpiar.oculto {
+    display: none;
+}
+
 .input-redondeado {
     width: 100%;
     border: none;
@@ -210,6 +254,7 @@ textarea.input-redondeado {
     cursor: pointer;
 }
 
+/* Estructura e Ingredientes */
 .columna-ingredientes {
     display: flex;
     flex-direction: column;
@@ -217,6 +262,73 @@ textarea.input-redondeado {
     width: 100%;
 }
 
+#contenedor_ingredientes {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.item-ingrediente-bloque {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px dashed #CCC;
+}
+
+.item-ingrediente-bloque:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+/* Controlador de Cantidad por Ingrediente */
+.cont-control-cantidad {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    width: 100%;
+}
+
+.btn-cant {
+    border: none;
+    background-color: var(--azul-dark);
+    color: var(--blanco);
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-cant:active {
+    transform: scale(0.92);
+}
+
+.input-cantidad {
+    width: 60px !important;
+    text-align: center;
+    padding: 0.4rem 0.2rem !important;
+    -moz-appearance: textfield;
+}
+
+.input-cantidad::-webkit-outer-spin-button,
+.input-cantidad::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.unidad-medida {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--gris-dark);
+    min-width: 35px;
+}
+
+/* Controles globales inferiores (+ / -) */
 .controles-ingredientes {
     display: flex;
     flex-direction: column;
@@ -254,12 +366,6 @@ textarea.input-redondeado {
     transform: scale(0.92);
 }
 
-#contenedor_ingredientes {
-    display: flex;
-    flex-direction: column;
-    gap: 1.4rem;
-}
-
 .btn-submit {
     border-radius: 3rem;
     padding: 16px 40px;
@@ -288,6 +394,9 @@ textarea.input-redondeado {
     padding: 1.4rem;
     width: 88vw;
     max-width: 380px;
+    max-height: 70vh;
+    display: flex;
+    flex-direction: column;
     text-align: center;
 }
 
@@ -301,6 +410,8 @@ textarea.input-redondeado {
     list-style: none;
     padding: 0;
     margin: 0.5rem 0 1rem 0;
+    max-height: 200px;
+    overflow-y: auto;
 }
 
 .lista-opciones-modal li {
@@ -530,6 +641,4 @@ textarea.input-redondeado {
         font-size: 1.3rem;
         border-radius: 10px;
     }
-
-    
 }

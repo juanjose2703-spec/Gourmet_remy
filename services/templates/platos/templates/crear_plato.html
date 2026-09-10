@@ -50,22 +50,34 @@
 
                     <div class="campo-form">
                         <label for="input_categoria">Categoría</label>
-                        <input type="text" id="input_categoria" name="categoria" class="input-redondeado input-select" readonly placeholder="Seleccionar..." required>
+                        <div class="cont-input-wrapper">
+                            <input type="text" id="input_categoria" name="categoria" class="input-redondeado input-select" readonly placeholder="Seleccionar..." required>
+                            <button type="button" class="btn-limpiar oculto" id="btn_limpiar_cat">&times;</button>
+                        </div>
                     </div>
                 </section>
 
                 <div class="columna-ingredientes">
                     <section class="bloque-gris">
                         <div id="contenedor_ingredientes">
-                            <div class="campo-form item-ingrediente">
-                                <label>Ingrediente 1</label>
-                                <input type="hidden" name="ingredientes[]" class="input-ingrediente-id">
-                                <input type="text" class="input-redondeado input-ingrediente-nombre" readonly placeholder="Seleccionar...">
-                            </div>
-                            <div class="campo-form item-ingrediente">
-                                <label>Ingrediente 2</label>
-                                <input type="hidden" name="ingredientes[]" class="input-ingrediente-id">
-                                <input type="text" class="input-redondeado input-ingrediente-nombre" readonly placeholder="Seleccionar...">
+                            <div class="item-ingrediente-bloque">
+                                <div class="campo-form item-ingrediente">
+                                    <label class="lbl-ingrediente">Ingrediente 1</label>
+                                    <input type="hidden" name="ingredientes[]" class="input-ingrediente-id">
+                                    <div class="cont-input-wrapper">
+                                        <input type="text" class="input-redondeado input-ingrediente-nombre" readonly placeholder="Seleccionar...">
+                                        <button type="button" class="btn-limpiar oculto">&times;</button>
+                                    </div>
+                                </div>
+                                <div class="campo-form fila-cantidad-ingrediente">
+                                    <label class="lbl-cantidad">Cantidad</label>
+                                    <div class="cont-control-cantidad">
+                                        <button type="button" class="btn-cant btn-menos">-</button>
+                                        <input type="number" name="cantidades[]" class="input-redondeado input-cantidad" value="1" min="1" step="any">
+                                        <button type="button" class="btn-cant btn-mas">+</button>
+                                        <span class="unidad-medida">gr</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </section>
