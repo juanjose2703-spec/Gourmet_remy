@@ -365,7 +365,7 @@ textarea.input-redondeado {
         transform: translateX(-50%);
         padding: 18px;
         font-size: 1.3rem;
-        width: clamp(280px, 35%, 400px);
+        width: clamp(220px, 40%, 300px);
     }
 }
 
@@ -463,14 +463,10 @@ textarea.input-redondeado {
     }
 
     .btn-submit {
-        margin: 0;
-        position: absolute;
-        left: 50%;
-        bottom: 0;
-        transform: translateX(-50%);
-        padding: 18px 60px;
-        font-size: 1.3rem;
-        width: clamp(280px, 35%, 400px);
+        margin: 6rem auto 1.5rem auto;
+        padding: 14px 48px;
+        font-size: 1.1rem;
+        width: clamp(220px, 40%, 300px);
     }
 }
 

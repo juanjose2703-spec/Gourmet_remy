@@ -576,7 +576,7 @@ input:checked + .slider:before {
         font-size: 1.3rem;
         left: 40%;
         padding: 18px 60px;
-        margin: 1.5rem auto 1.5rem auto;
+        margin: 8rem auto 1.5rem auto;
         width: clamp(280px, 35%, 400px);
     }
 }

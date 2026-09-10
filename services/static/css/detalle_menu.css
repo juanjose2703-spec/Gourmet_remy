@@ -451,4 +451,12 @@ input:checked + .deslizador-swtch::before {
     .img-fluida {
         height: 480px;
     }
+
+    .cont-marcador-gris {
+    background-color: var(--gris-tarjeta);
+    border-radius: 18px;
+    padding: 0.65rem;
+    width: 90%;
+    overflow: hidden;
+    }
 }

@@ -484,7 +484,7 @@ input:checked + .slider:before {
     }
 
     .btn-submit {
-        margin: 9rem auto 1.5rem auto;
+        margin: 6rem auto 1.5rem auto;
         padding: 14px 48px;
         font-size: 1.1rem;
         width: clamp(220px, 40%, 300px);
@@ -494,7 +494,7 @@ input:checked + .slider:before {
 @media screen and (min-width: 1920px) {
     .contenedor-form {
         max-width: 1300px;
-        padding: 3rem 2rem;
+        padding: 7rem 0rem;
         gap: 2.2rem;
         margin: 0 auto;
     }
@@ -554,7 +554,7 @@ input:checked + .slider:before {
     .btn-submit {
         font-size: 1.3rem;
         padding: 18px 60px;
-        margin: 1.5rem auto 1.5rem auto;
+        margin: 8rem auto 1.5rem auto;
         width: clamp(280px, 35%, 400px);
     }
 }
