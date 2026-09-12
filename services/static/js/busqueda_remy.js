@@ -44,13 +44,13 @@ function inicializarBusquedaREMY() {
 
                 contenedor.innerHTML += `
                     <article class="tarjeta-item-resultado" 
-                             data-titulo="${item.nombre ? item.nombre.toLowerCase() : ''}" 
-                             data-categoria="${item.tipo ? item.tipo.toLowerCase() : ''}">
+                            data-titulo="${item.nombre ? item.nombre.toLowerCase() : ''}" 
+                            data-categoria="${item.tipo ? item.tipo.toLowerCase() : ''}">
                         <figure class="cont-img-tarjeta">
                             <img src="${rutaImagen}" 
-                                 alt="${item.nombre}" 
-                                 class="img-tarjeta" 
-                                 onerror="this.src='${IMAGEN_DEFAULT}'">
+                                alt="${item.nombre}" 
+                                class="img-tarjeta" 
+                                onerror="this.src='${IMAGEN_DEFAULT}'">
                         </figure>
                         <div class="cont-info-tarjeta">
                             <h2 class="tit-item">${item.nombre ? item.nombre.toUpperCase() : 'SIN TÍTULO'}</h2>
