@@ -47,37 +47,32 @@ NOMBRES_A_ID_CATEGORIA = {
 def generar_codigo_plato(id_categoria, conn):
     if id_categoria not in MAPA_CATEGORIAS:
         raise ValueError("Categoría inválida.")
-    
     prefijo = f"PL{MAPA_CATEGORIAS[id_categoria]}"
     cursor = conn.cursor(dictionary=True)
-    
     query = "SELECT id_plato FROM platos WHERE id_plato LIKE %s ORDER BY id_plato DESC LIMIT 1"
     cursor.execute(query, (f"{prefijo}%",))
     resultado = cursor.fetchone()
     cursor.close()
-
     if resultado:
         ultimo_codigo = resultado['id_plato']
         numero = int(ultimo_codigo[-3:])
         nuevo_numero = str(numero + 1).zfill(3)
     else:
         nuevo_numero = "001"
-
     return f"{prefijo}{nuevo_numero}"
 
 def guardar_imagen_png(file_storage, id_plato, directorio_destino):
     if not os.path.exists(directorio_destino):
         os.makedirs(directorio_destino, exist_ok=True)
-
     nombre_archivo = f"{id_plato}.png"
     ruta_final = os.path.join(directorio_destino, nombre_archivo)
-
     imagen = Image.open(file_storage)
     if imagen.mode != 'RGBA':
         imagen = imagen.convert('RGBA')
-        
     imagen.save(ruta_final, format='PNG', optimize=True)
     return nombre_archivo
+
+# ========== RUTAS ESTÁTICAS ==========
 
 @programa.route('/img_remy/<path:filename>')
 def obtener_imagen_local(filename):
@@ -97,6 +92,8 @@ def platos_static(filename):
         filename
     )
 
+# ========== RUTAS DE VISTAS ==========
+
 @programa.route('/')
 def index():
     return render_template('platos_menu.html')
@@ -104,6 +101,10 @@ def index():
 @programa.route('/platos_menu')
 def platos_menu():
     return render_template('platos_menu.html')
+
+@programa.route('/busqueda')
+def busqueda():
+    return render_template('busqueda.html')
 
 @programa.route('/crear_plato')
 def crear_plato():
@@ -113,17 +114,9 @@ def crear_plato():
 def modificar_plato(id_plato):
     return render_template('platos/templates/modificar_plato.html')
 
-@programa.route('/busqueda')
-def busqueda():
-    return render_template('busqueda.html')
-
 @programa.route('/detalle_plato/<id_plato>')
 def detalle_plato(id_plato):
     return render_template('platos/templates/detalle_plato.html')
-
-@programa.route('/detalle_menu/<id_menu>')
-def detalle_menu(id_menu):
-    return render_template('menus/templates/detalle_menu.html')
 
 @programa.route('/crear_menu')
 def crear_menu():
@@ -133,11 +126,19 @@ def crear_menu():
 def modificar_menu(id_menu):
     return render_template('menus/templates/modificar_menu.html')
 
+@programa.route('/detalle_menu/<id_menu>')
+def detalle_menu(id_menu):
+    return render_template('menus/templates/detalle_menu.html')
+
+# ========== BÚSQUEDA GENERAL ==========
+
 @programa.route('/buscar')
 def buscar():
     q = request.args.get('q', '')
     resultado = buscarGeneral(q)
     return programa.response_class(response=resultado, status=200, mimetype='application/json')
+
+# ========== API INGREDIENTES (directa a BD) ==========
 
 @programa.route('/api/ingredientes', methods=['GET'])
 def obtener_ingredientes():
@@ -155,9 +156,21 @@ def obtener_ingredientes():
         if conn and conn.is_connected():
             conn.close()
 
+# ========== API PLATOS (proxy → microservicio 5085) ==========
+
 @programa.route('/api/platos', methods=['GET'])
 def proxy_platos():
     r = req.get('http://localhost:5085/platos')
+    return programa.response_class(response=r.text, status=r.status_code, mimetype='application/json')
+
+@programa.route('/api/platos/<id_plato>', methods=['GET'])
+def proxy_plato_id(id_plato):
+    r = req.get(f'http://localhost:5085/platos/{id_plato}')
+    return programa.response_class(response=r.text, status=r.status_code, mimetype='application/json')
+
+@programa.route('/api/platos/<id_plato>/ingredientes', methods=['GET'])
+def proxy_plato_ingredientes(id_plato):
+    r = req.get(f'http://localhost:5085/platos/{id_plato}/ingredientes')
     return programa.response_class(response=r.text, status=r.status_code, mimetype='application/json')
 
 @programa.route('/api/platos/insertar', methods=['POST'])
@@ -220,18 +233,18 @@ def insertar_plato():
         if conn and conn.is_connected():
             conn.rollback()
         return jsonify({"status": "error", "message": f"Error en el servidor: {str(e)}"}), 500
-
     finally:
         if conn and conn.is_connected():
             conn.close()
 
-    
-@programa.route('/api/menus')
+# ========== API MENUS (proxy → microservicio 5084) ==========
+
+@programa.route('/api/menus', methods=['GET'])
 def proxy_menus():
     r = req.get('http://localhost:5084/menus')
     return programa.response_class(response=r.text, status=r.status_code, mimetype='application/json')
 
-@programa.route('/api/menus/<id_menu>')
+@programa.route('/api/menus/<id_menu>', methods=['GET'])
 def proxy_menu_id(id_menu):
     r = req.get(f'http://localhost:5084/menus/{id_menu}')
     return programa.response_class(response=r.text, status=r.status_code, mimetype='application/json')

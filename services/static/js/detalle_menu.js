@@ -6,7 +6,7 @@ async function cargarDetalleMenu() {
 
     try {
         // 1. Obtener datos desde la API de menús
-        const responseMenu = await fetch(`http://localhost:5084/menus/${id_menu}`);
+        const responseMenu = await fetch(`/api/menus/${id_menu}`);
 
         if (!responseMenu.ok) {
             console.error(`Error ${responseMenu.status}: No se encontró el menú '${id_menu}'`);

@@ -10,15 +10,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function obtenerRutaImagen(img) {
         if (!img || img.trim() === '') return IMAGEN_DEFAULT;
-        if (img.startsWith('http://') || img.startsWith('https://')) {
-            return img;
-        }
+        if (img.startsWith('http://') || img.startsWith('https://')) return img;
         return `/img_remy/${img}`;
     }
 
     try {
-        // Cargar Datos del Plato
-        const responsePlato = await fetch(`http://localhost:5085/platos/${id_plato}`);
+        const responsePlato = await fetch(`/api/platos/${id_plato}`);
         if (responsePlato.ok) {
             const plato = await responsePlato.json();
 
@@ -36,8 +33,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        // Cargar Ingredientes del Plato
-        const responseIng = await fetch(`http://localhost:5085/platos/${id_plato}/ingredientes`);
+        const responseIng = await fetch(`/api/platos/${id_plato}/ingredientes`);
         const tbody = document.getElementById('tbody_ingredientes');
         tbody.innerHTML = '';
 
@@ -55,18 +51,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     `;
                 });
             } else {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="3" style="text-align: center;">No hay ingredientes registrados para este plato.</td>
-                    </tr>
-                `;
+                tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;">No hay ingredientes registrados.</td></tr>`;
             }
         } else {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="3" style="text-align: center;">Error al obtener ingredientes del servidor.</td>
-                </tr>
-            `;
+            tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;">Error al obtener ingredientes.</td></tr>`;
         }
 
     } catch (error) {
