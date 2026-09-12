@@ -4,6 +4,7 @@ from flask import Flask, render_template, request, jsonify, send_from_directory
 from flask_cors import CORS
 from PIL import Image
 import mysql.connector
+import requests as req
 from buscarGeneral import buscarGeneral
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -155,33 +156,9 @@ def obtener_ingredientes():
             conn.close()
 
 @programa.route('/api/platos', methods=['GET'])
-def obtener_platos():
-    conn = None
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor(dictionary=True)
-        query = """
-            SELECT 
-                p.id_plato, 
-                p.nombre, 
-                p.descripcion, 
-                p.img_plato, 
-                p.categoria AS id_categoria,
-                c.nombre_categoria
-            FROM platos p
-            LEFT JOIN categorias_platos c ON p.categoria = c.id_categoria
-            WHERE p.estado = 'Activo'
-            ORDER BY p.fecha_creacion DESC
-        """
-        cursor.execute(query)
-        platos = cursor.fetchall()
-        cursor.close()
-        return jsonify({"status": "success", "data": platos}), 200
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
-    finally:
-        if conn and conn.is_connected():
-            conn.close()
+def proxy_platos():
+    r = req.get('http://localhost:5085/platos')
+    return programa.response_class(response=r.text, status=r.status_code, mimetype='application/json')
 
 @programa.route('/api/platos/insertar', methods=['POST'])
 def insertar_plato():
@@ -247,6 +224,17 @@ def insertar_plato():
     finally:
         if conn and conn.is_connected():
             conn.close()
+
+    
+@programa.route('/api/menus')
+def proxy_menus():
+    r = req.get('http://localhost:5084/menus')
+    return programa.response_class(response=r.text, status=r.status_code, mimetype='application/json')
+
+@programa.route('/api/menus/<id_menu>')
+def proxy_menu_id(id_menu):
+    r = req.get(f'http://localhost:5084/menus/{id_menu}')
+    return programa.response_class(response=r.text, status=r.status_code, mimetype='application/json')
 
 if __name__ == '__main__':
     programa.run(host='0.0.0.0', debug=True, port=5000)
