@@ -18,36 +18,34 @@ document.addEventListener('DOMContentLoaded', async () => {
         'bebida':       null
     };
 
-    const superficieModal      = document.getElementById('superficie_modal');
-    const tituloSuperficie     = document.getElementById('titulo_superficie');
-    const inputBuscarPlato     = document.getElementById('input_buscar_plato');
+    const superficieModal       = document.getElementById('superficie_modal');
+    const tituloSuperficie      = document.getElementById('titulo_superficie');
+    const inputBuscarPlato      = document.getElementById('input_buscar_plato');
     const listaPlatosContenedor = document.getElementById('lista_platos');
-    const formaModificarMenu   = document.getElementById('forma_modificar_menu');
-    const camposSeleccion      = document.querySelectorAll('.campo-seleccion');
-    const inputPrecio          = document.getElementById('precio_menu');
-    const toggleActivo         = document.getElementById('activo_menu');
-    const lblEstado            = document.getElementById('lbl_estado_menu');
-    const botonesLimpiar       = document.querySelectorAll('.btn-limpiar');
+    const formaModificarMenu    = document.getElementById('forma_modificar_menu');
+    const camposSeleccion       = document.querySelectorAll('.campo-seleccion');
+    const inputPrecio           = document.getElementById('precio_menu');
+    const toggleActivo          = document.getElementById('activo_menu');
+    const lblEstado             = document.getElementById('lbl_estado_menu');
+    const botonesLimpiar        = document.querySelectorAll('.btn-limpiar');
 
-    // Obtener id_menu de la URL
     const partes = window.location.pathname.split('/');
     const id_menu = partes[partes.length - 1];
 
-    // Cargar todos los platos activos desde la BD
     async function cargarTodosLosPlatos() {
         try {
-            const response = await fetch('http://localhost:5085/platos');
-            const data = await response.json();
+            const response = await fetch('/api/platos');
+            const json = await response.json();
+            const data = Array.isArray(json) ? json : (json.data || []);
             todosLosPlatos = data.filter(p => p.estado === 'Activo');
         } catch (error) {
             console.error('Error al cargar platos:', error);
         }
     }
 
-    // Cargar datos del menú actual y precargar los campos
     async function cargarMenuExistente() {
         try {
-            const response = await fetch(`http://localhost:5084/menus/${id_menu}`);
+            const response = await fetch(`/api/menus/${id_menu}`);
             const menu = await response.json();
 
             if (!menu) return;
@@ -58,7 +56,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             toggleActivo.checked = menu.estado === 'Activo';
             actualizarEstadoToggle();
 
-            // Precargar platos en los campos según categoría
             if (menu.platos && menu.platos.length > 0) {
                 menu.platos.forEach(plato => {
                     if (plato.categoria === 1) {
@@ -225,7 +222,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         };
 
         try {
-            const response = await fetch(`http://localhost:5084/menus/${id_menu}`, {
+            const response = await fetch(`/api/menus/${id_menu}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)

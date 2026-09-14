@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggleActivo = document.getElementById('activo_menu');
     const lblEstado = document.getElementById('lbl_estado_menu');
 
-    // Mapeo de campo → categoría (int)
     const mapaCategorias = {
         'plato_fuerte': 2,
         'entrada':      1,
@@ -23,7 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
         'bebida':       4
     };
 
-    // Guardar el id_plato seleccionado por campo
     const platosSeleccionados = {
         'plato_fuerte': null,
         'entrada':      null,
@@ -31,15 +29,23 @@ document.addEventListener('DOMContentLoaded', () => {
         'bebida':       null
     };
 
-    // Cargar todos los platos activos desde la BD una sola vez
     async function cargarTodosLosPlatos() {
         try {
-            const response = await fetch('http://localhost:5085/platos');
-            const data = await response.json();
+            const response = await fetch('/api/platos');
+            const json = await response.json();
+            const data = Array.isArray(json) ? json : (json.data || []);
             todosLosPlatos = data.filter(p => p.estado === 'Activo');
         } catch (error) {
             console.error('Error al cargar platos:', error);
         }
+    }
+
+    // Función auxiliar para obtener los platos pertenecientes a la categoría actual
+    function obtenerPlatosCategoriaActual() {
+        return todosLosPlatos.filter(p => {
+            const cat = p.id_categoria !== undefined ? p.id_categoria : p.categoria;
+            return String(cat) === String(categoriaFiltroActual);
+        });
     }
 
     function actualizarBotonLimpiar(input) {
@@ -67,15 +73,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Abrir modal filtrando por categoría del campo tocado
     camposSeleccion.forEach(input => {
         input.addEventListener('click', () => {
             campoDestinoInput = input;
             categoriaFiltroActual = mapaCategorias[input.id];
             tituloSuperficie.textContent = input.getAttribute('data-titulo') || 'Escoger plato';
             inputBuscarPlato.value = '';
-            const platosFiltrados = todosLosPlatos.filter(p => p.categoria === categoriaFiltroActual);
+            
+            // Renderiza inmediatamente los platos filtrados por categoría al abrir
+            const platosFiltrados = obtenerPlatosCategoriaActual();
             renderizarPlatos(platosFiltrados);
+            
             superficieModal.classList.remove('oculto');
         });
     });
@@ -115,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <img src="${plato.img_plato || ''}" alt="${plato.nombre}">
                 <div class="info-plato">
                     <h3>${plato.nombre}</h3>
-                    <p>${plato.descripcion}</p>
+                    <p>${plato.descripcion || ''}</p>
                 </div>
             `;
             listaPlatosContenedor.appendChild(tarjeta);
@@ -124,16 +132,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     inputBuscarPlato.addEventListener('input', () => {
         const texto = inputBuscarPlato.value.toLowerCase().trim();
-        const base = todosLosPlatos.filter(p => p.categoria === categoriaFiltroActual);
+        const base = obtenerPlatosCategoriaActual();
+        
         if (texto === '') {
             renderizarPlatos(base);
             return;
         }
-        const filtrados = base.filter(p => p.nombre.toLowerCase().includes(texto));
-        renderizarPlatos(filtrados);
+        renderizarPlatos(base.filter(p => p.nombre.toLowerCase().includes(texto)));
     });
 
-    // Restringir input de precio
     if (inputPrecio) {
         inputPrecio.addEventListener('keydown', (evento) => {
             if (['e', 'E', '+', '-', '.'].includes(evento.key)) evento.preventDefault();
@@ -143,7 +150,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Toggle de estado
     function actualizarEstadoToggle() {
         if (lblEstado && toggleActivo) {
             lblEstado.textContent = toggleActivo.checked ? 'Activo' : 'Inactivo';
@@ -154,7 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
         actualizarEstadoToggle();
     }
 
-    // Enviar formulario al backend
     formaInsertarMenu.addEventListener('submit', async (evento) => {
         evento.preventDefault();
 
@@ -186,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         try {
-            const response = await fetch('http://localhost:5084/menus', {
+            const response = await fetch('/api/menus', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
@@ -204,6 +209,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Cargar platos al iniciar
     cargarTodosLosPlatos();
 });

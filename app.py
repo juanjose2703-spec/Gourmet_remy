@@ -146,7 +146,8 @@ def obtener_ingredientes():
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT id_ingrediente, nombre FROM ingredientes ORDER BY nombre ASC")
+        # Incluye la columna unidad_minima para reconocer líquidos (ml) y sólidos (gr)
+        cursor.execute("SELECT id_ingrediente, nombre, unidad_minima FROM ingredientes ORDER BY nombre ASC")
         ingredientes = cursor.fetchall()
         cursor.close()
         return jsonify(ingredientes), 200
@@ -181,7 +182,9 @@ def insertar_plato():
         categoria_raw = request.form.get('categoria', '').strip()
         descripcion = request.form.get('descripcion', '').strip()
         estado = request.form.get('estado', 'Activo')
+        
         ingredientes_ids = request.form.getlist('ingredientes[]')
+        cantidades = request.form.getlist('cantidades[]')
 
         if categoria_raw.isdigit():
             id_categoria = int(categoria_raw)
@@ -213,10 +216,14 @@ def insertar_plato():
         cursor.execute(query_plato, (id_plato, nombre, id_categoria, descripcion, nombre_imagen_guardada, estado, fecha_creacion))
 
         if ingredientes_ids:
-            ingredientes_validos = [ing.strip() for ing in ingredientes_ids if ing and ing.strip()]
-            if ingredientes_validos:
-                query_ing = "INSERT INTO plato_ingrediente (id_plato, id_ingrediente, cantidad) VALUES (%s, %s, %s)"
-                datos_ingredientes = [(id_plato, id_ing, 1) for id_ing in ingredientes_validos]
+            query_ing = "INSERT INTO plato_ingrediente (id_plato, id_ingrediente, cantidad) VALUES (%s, %s, %s)"
+            datos_ingredientes = []
+            for idx, id_ing in enumerate(ingredientes_ids):
+                if id_ing and id_ing.strip():
+                    cant = cantidades[idx] if idx < len(cantidades) and cantidades[idx] else 1
+                    datos_ingredientes.append((id_plato, id_ing.strip(), float(cant)))
+            
+            if datos_ingredientes:
                 cursor.executemany(query_ing, datos_ingredientes)
 
         conn.commit()
@@ -247,6 +254,20 @@ def proxy_menus():
 @programa.route('/api/menus/<id_menu>', methods=['GET'])
 def proxy_menu_id(id_menu):
     r = req.get(f'http://localhost:5084/menus/{id_menu}')
+    return programa.response_class(response=r.text, status=r.status_code, mimetype='application/json')
+
+@programa.route('/api/menus/<id_menu>', methods=['PUT'])
+def proxy_menu_put(id_menu):
+    r = req.put(f'http://localhost:5084/menus/{id_menu}',
+                json=request.json,
+                headers={'Content-Type': 'application/json'})
+    return programa.response_class(response=r.text, status=r.status_code, mimetype='application/json')
+
+@programa.route('/api/menus', methods=['POST'])
+def proxy_menus_post():
+    r = req.post('http://localhost:5084/menus',
+                json=request.json,
+                headers={'Content-Type': 'application/json'})
     return programa.response_class(response=r.text, status=r.status_code, mimetype='application/json')
 
 if __name__ == '__main__':
