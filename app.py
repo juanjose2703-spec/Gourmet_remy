@@ -149,7 +149,6 @@ def obtener_ingredientes():
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        # Incluye la columna unidad_minima para reconocer líquidos (ml) y sólidos (gr)
         cursor.execute("SELECT id_ingrediente, nombre, unidad_minima FROM ingredientes ORDER BY nombre ASC")
         ingredientes = cursor.fetchall()
         cursor.close()
@@ -160,7 +159,7 @@ def obtener_ingredientes():
         if conn and conn.is_connected():
             conn.close()
 
-# ========== API PLATOS (proxy → microservicio 5085) ==========
+# ========== API PLATOS ==========
 
 @programa.route('/api/platos', methods=['GET'])
 def proxy_platos():
@@ -238,6 +237,121 @@ def insertar_plato():
             "id_plato_generado": id_plato,
             "img_plato": nombre_imagen_guardada
         }), 201
+
+    except Exception as e:
+        if conn and conn.is_connected():
+            conn.rollback()
+        return jsonify({"status": "error", "message": f"Error en el servidor: {str(e)}"}), 500
+    finally:
+        if conn and conn.is_connected():
+            conn.close()
+
+# ========== MODIFICACIÓN Y ELIMINACIÓN DE PLATOS ==========
+
+@programa.route('/api/platos/<id_plato>', methods=['PUT', 'POST', 'DELETE'])
+@programa.route('/api/platos/<id_plato>/modificar', methods=['PUT', 'POST'])
+def modificar_plato_api(id_plato):
+    conn = None
+    try:
+        conn = get_db_connection()
+
+        # 1. Petición DELETE
+        if request.method == 'DELETE':
+            cursor_del = conn.cursor()
+            cursor_del.execute("DELETE FROM plato_ingrediente WHERE id_plato = %s", (id_plato,))
+            cursor_del.execute("DELETE FROM platos WHERE id_plato = %s", (id_plato,))
+            conn.commit()
+            cursor_del.close()
+            return jsonify({"status": "success", "message": "Plato eliminado correctamente"}), 200
+
+        # 2. Petición PUT / POST (Actualización)
+        is_json = request.is_json
+        if is_json:
+            data = request.get_json(silent=True) or {}
+            nombre = data.get('nombre', '').strip()
+            categoria_raw = str(data.get('categoria', '')).strip()
+            descripcion = data.get('descripcion', '').strip()
+            estado = data.get('estado', 'Activo')
+            ing_data = data.get('ingredientes', [])
+            cantidades = data.get('cantidades', [])
+        else:
+            data = request.form
+            nombre = data.get('nombre', '').strip()
+            categoria_raw = str(data.get('categoria', '')).strip()
+            descripcion = data.get('descripcion', '').strip()
+            estado = data.get('estado', 'Activo')
+            ing_data = request.form.getlist('ingredientes[]') or request.form.getlist('ingredientes')
+            cantidades = request.form.getlist('cantidades[]') or request.form.getlist('cantidades')
+
+        # Procesamiento de la categoría
+        if categoria_raw.isdigit():
+            id_categoria = int(categoria_raw)
+        else:
+            id_categoria = NOMBRES_A_ID_CATEGORIA.get(categoria_raw.lower(), 0)
+
+        if not nombre or id_categoria == 0 or not descripcion:
+            return jsonify({"status": "error", "message": "Campos requeridos incompletos."}), 400
+
+        # Verificar existencia del plato en la base de datos
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT categoria, img_plato FROM platos WHERE id_plato = %s", (id_plato,))
+        plato_actual = cursor.fetchone()
+        cursor.close()
+
+        if not plato_actual:
+            return jsonify({"status": "error", "message": f"El plato '{id_plato}' no existe."}), 404
+
+        # Regeneración de ID si cambió la categoría
+        id_final = id_plato
+        if int(plato_actual['categoria']) != id_categoria:
+            id_final = generar_codigo_plato(id_categoria, conn)
+
+        # Manejo de imagen
+        nombre_imagen = plato_actual['img_plato'] or ""
+        if 'imagen' in request.files and request.files['imagen'].filename != '':
+            nombre_imagen = guardar_imagen_png(request.files['imagen'], id_final, PLATS_IMG_DIR)
+
+        cursor = conn.cursor()
+
+        # Paso 1: Eliminar ingredientes del ID ORIGINAL (Evita fallos por Foreign Key)
+        cursor.execute("DELETE FROM plato_ingrediente WHERE id_plato = %s", (id_plato,))
+
+        # Paso 2: Actualizar el plato
+        cursor.execute("""
+            UPDATE platos SET id_plato=%s, nombre=%s, categoria=%s,
+            descripcion=%s, img_plato=%s, estado=%s WHERE id_plato=%s
+        """, (id_final, nombre, id_categoria, descripcion, nombre_imagen, estado, id_plato))
+
+        # Paso 3: Insertar la nueva lista de ingredientes con id_final
+        datos_ing = []
+        if is_json and isinstance(ing_data, list) and len(ing_data) > 0 and isinstance(ing_data[0], dict):
+            for item in ing_data:
+                id_ing = str(item.get("id_ingrediente", "")).strip()
+                cant = item.get("cantidad", 1)
+                if id_ing:
+                    datos_ing.append((id_final, id_ing, float(cant)))
+        else:
+            for idx, id_ing in enumerate(ing_data):
+                id_ing_str = str(id_ing).strip()
+                if id_ing_str:
+                    cant = cantidades[idx] if idx < len(cantidades) and cantidades[idx] else 1
+                    datos_ing.append((id_final, id_ing_str, float(cant)))
+
+        if datos_ing:
+            cursor.executemany(
+                "INSERT INTO plato_ingrediente (id_plato, id_ingrediente, cantidad) VALUES (%s, %s, %s)",
+                datos_ing
+            )
+
+        conn.commit()
+        cursor.close()
+
+        return jsonify({
+            "status": "success",
+            "message": "Plato modificado exitosamente",
+            "id_plato_final": id_final,
+            "id_plato_anterior": id_plato
+        }), 200
 
     except Exception as e:
         if conn and conn.is_connected():

@@ -29,7 +29,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                 document.getElementById('descripcion_plato').textContent = plato.descripcion || 'Sin descripción disponible.';
                 document.getElementById('categoria_plato').textContent = categorias[plato.categoria] || 'Sin categoría';
                 document.getElementById('fecha_plato').textContent = plato.fecha_creacion ? plato.fecha_creacion.split('T')[0] : 'Sin fecha';
-                document.getElementById('selector_estado_activo').checked = plato.estado === 'Activo';
+                
+                // Asigna el valor del estado y bloquea la interacción del usuario
+                const switchEstado = document.getElementById('selector_estado_activo');
+                if (switchEstado) {
+                    switchEstado.checked = plato.estado === 'Activo';
+                    switchEstado.disabled = true;
+                }
+
+                const btnEditar = document.getElementById('btn_editar_plato') 
+                               || document.querySelector('a[href*="modificar_plato"]') 
+                               || document.querySelector('.btn-editar');
+                if (btnEditar) {
+                    btnEditar.href = `/modificar_plato/${id_plato}`;
+                }
             }
         }
 

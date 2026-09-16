@@ -1,117 +1,307 @@
-/**
- * REMY 1.0 - JS Global Reutilizable (Modificar Plato)
- */
-window.REMY = {
-    minIngredientes: 2,
-    maxIngredientes: 30,
+document.addEventListener('DOMContentLoaded', async () => {
 
-    // Previsualización de la imagen cargada
-    previewImagen: function(event) {
-        const file = event.target && event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = document.getElementById('img_preview');
-                if (img) img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
+    const formModificarPlato      = document.getElementById('form_modificar_plato');
+    const inputFoto               = document.getElementById('input_foto');
+    const imgPreview              = document.getElementById('img_preview');
+    const inputNombre             = document.getElementById('input_nombre');
+    const inputDescripcion        = document.getElementById('input_descripcion');
+    const inputCategoria          = document.getElementById('input_categoria');
+    const inputEstado             = document.getElementById('input_estado');
+    const btnLimpiarCat           = document.getElementById('btn_limpiar_cat');
+
+    const contenedorIngredientes = document.getElementById('contenedor_ingredientes');
+    const btnAgregarIngrediente  = document.getElementById('btn_agregar_ingrediente');
+    const btnQuitarIngrediente   = document.getElementById('btn_quitar_ingrediente');
+
+    const modalCategoria          = document.getElementById('modal_categoria');
+    const modalIngredientes       = document.getElementById('modal_ingredientes');
+    const btnCerrarModalCat       = document.getElementById('btn_cerrar_modal_cat');
+    const btnCerrarModalIng       = document.getElementById('btn_cerrar_modal_ing');
+
+    let itemIngredienteActual = null;
+
+    // Mapeo de IDs numéricos a los nombres textuales de las categorías
+    const categoriasMap = {
+        1: 'Entrada',
+        2: 'Plato Fuerte',
+        3: 'Postre',
+        4: 'Bebida',
+        '1': 'Entrada',
+        '2': 'Plato Fuerte',
+        '3': 'Postre',
+        '4': 'Bebida'
+    };
+
+    const partes = window.location.pathname.split('/');
+    const id_plato = partes[partes.length - 1];
+
+    if (!id_plato) return;
+
+    // 1. Cargar catálogo de ingredientes para el Modal
+    async function cargarCatalogoIngredientes() {
+        try {
+            const res = await fetch('/api/ingredientes');
+            const ingredientes = await res.json();
+            const listaModal = document.getElementById('lista_ingredientes');
+
+            if (listaModal && Array.isArray(ingredientes)) {
+                listaModal.innerHTML = ingredientes.map(ing => {
+                    const unidad = ing.unidad || ing.unidad_minima || ing.unidad_medida || 'gr';
+                    return `<li data-id="${ing.id_ingrediente}" data-nombre="${ing.nombre}" data-unidad="${unidad}">${ing.nombre}</li>`;
+                }).join('');
+            }
+        } catch (err) {
+            console.error('Error al cargar catálogo de ingredientes:', err);
         }
-    },
+    }
 
-    // Gestión de Modales Nativos <dialog>
-    abrirModal: function(idModal) {
-        const modal = document.getElementById(idModal);
-        if (modal && typeof modal.showModal === "function") {
-            modal.showModal();
+    // 2. Generador de Bloque de Ingrediente
+    function crearBloqueIngrediente(numIndex, id = '', nombre = '', cantidad = 1, unidad = 'gr') {
+        const div = document.createElement('div');
+        div.className = 'item-ingrediente-bloque';
+        const ocultoClass = nombre ? '' : 'oculto';
+
+        div.innerHTML = `
+            <div class="campo-form item-ingrediente">
+                <label class="lbl-ingrediente">Ingrediente ${numIndex}</label>
+                <input type="hidden" name="ingredientes[]" class="input-ingrediente-id" value="${id}">
+                <div class="cont-input-wrapper">
+                    <input type="text" class="input-redondeado input-ingrediente-nombre" readonly placeholder="Seleccionar..." value="${nombre}">
+                    <button type="button" class="btn-limpiar ${ocultoClass}">&times;</button>
+                </div>
+            </div>
+            <div class="campo-form fila-cantidad-ingrediente">
+                <label class="lbl-cantidad">Cantidad</label>
+                <div class="cont-control-cantidad">
+                    <button type="button" class="btn-cant btn-menos">-</button>
+                    <input type="number" name="cantidades[]" class="input-redondeado input-cantidad" value="${cantidad}" min="1" step="any">
+                    <button type="button" class="btn-cant btn-mas">+</button>
+                    <span class="unidad-medida">${unidad}</span>
+                </div>
+            </div>
+        `;
+        return div;
+    }
+
+    // 3. Cargar datos del plato convirtiendo la categoría a su nombre correspondiente
+    async function cargarPlato() {
+        try {
+            const res = await fetch(`/api/platos/${id_plato}`);
+            if (!res.ok) return;
+            const plato = await res.json();
+
+            if (plato) {
+                if (inputNombre) inputNombre.value = plato.nombre || '';
+                if (inputDescripcion) inputDescripcion.value = plato.descripcion || '';
+                
+                if (inputCategoria) {
+                    let catVal = plato.nombre_categoria || plato.categoria_nombre || plato.categoria || '';
+                    if (categoriasMap[catVal]) {
+                        catVal = categoriasMap[catVal];
+                    }
+                    inputCategoria.value = catVal;
+                    if (btnLimpiarCat && catVal) btnLimpiarCat.classList.remove('oculto');
+                }
+
+                if (inputEstado) {
+                    inputEstado.checked = (plato.estado === 'Activo');
+                }
+
+                if (imgPreview && plato.img_plato) {
+                    imgPreview.src = plato.img_plato.startsWith('http') || plato.img_plato.startsWith('data:')
+                        ? plato.img_plato 
+                        : `/img_remy/${plato.img_plato}`;
+                }
+            }
+        } catch (err) {
+            console.error('Error al cargar plato:', err);
         }
-    },
+    }
 
-    cerrarModal: function(idModal) {
-        const modal = document.getElementById(idModal);
-        if (modal && typeof modal.close === "function") {
-            modal.close();
-        }
-    },
+    // 4. Cargar ingredientes asignados al plato
+    async function cargarIngredientesPlato() {
+        try {
+            const res = await fetch(`/api/platos/${id_plato}/ingredientes`);
+            if (!res.ok) return;
+            const ingredientes = await res.json();
 
-    seleccionarCategoria: function(valor) {
-        const inputCat = document.getElementById('input_categoria');
-        if (inputCat) inputCat.value = valor;
-        this.cerrarModal('modal_categoria');
-    },
+            if (contenedorIngredientes) {
+                contenedorIngredientes.innerHTML = '';
 
-    // Agregar ingrediente con o sin valor inicial
-    agregarIngrediente: function(valor = '') {
-        const contenedor = document.getElementById('contenedor_ingredientes');
-        if (!contenedor) return;
+                if (Array.isArray(ingredientes) && ingredientes.length > 0) {
+                    ingredientes.forEach((ing, idx) => {
+                        const idIng = ing.id_ingrediente || ing.id || '';
+                        const nomIng = ing.nombre || '';
+                        const cantIng = ing.cantidad || 1;
+                        const uniIng = ing.unidad || ing.unidad_medida || 'gr';
 
-        const cantidadActual = contenedor.getElementsByClassName('item-ingrediente').length;
-
-        if (cantidadActual < this.maxIngredientes) {
-            const nuevoNumero = cantidadActual + 1;
-            const nuevoDiv = document.createElement('div');
-            nuevoDiv.className = 'campo-form item-ingrediente';
-            nuevoDiv.innerHTML = `
-                <label>Ingrediente ${nuevoNumero}</label>
-                <input type="text" class="input-redondeado input-ingrediente" readonly value="${valor}" placeholder="Seleccionar..." onclick="REMY.abrirModal('modal_ingredientes')">
-            `;
-            contenedor.appendChild(nuevoDiv);
-        }
-    },
-
-    // Eliminar último ingrediente (Mínimo 2)
-    removerIngrediente: function() {
-        const contenedor = document.getElementById('contenedor_ingredientes');
-        if (!contenedor) return;
-
-        const elementos = contenedor.getElementsByClassName('item-ingrediente');
-        if (elementos.length > this.minIngredientes) {
-            contenedor.removeChild(elementos[elementos.length - 1]);
-        }
-    },
-
-    // Carga de datos mock del plato existente
-    cargarPlatoExistente: function(datos) {
-        if (!datos) return;
-
-        const elNombre = document.getElementById('input_nombre');
-        const elDesc = document.getElementById('input_descripcion');
-        const elCat = document.getElementById('input_categoria');
-        const elImg = document.getElementById('img_preview');
-        const elEstado = document.getElementById('input_estado');
-
-        if (elNombre && datos.nombre) elNombre.value = datos.nombre;
-        if (elDesc && datos.descripcion) elDesc.value = datos.descripcion;
-        if (elCat && datos.categoria) elCat.value = datos.categoria;
-        if (elImg && datos.imagen) elImg.src = datos.imagen;
-        if (elEstado && typeof datos.activo !== 'undefined') {
-            elEstado.checked = Boolean(datos.activo);
-        }
-
-        // Renderizado dinámico de la lista de ingredientes del plato
-        if (datos.ingredientes && Array.isArray(datos.ingredientes)) {
-            const contenedor = document.getElementById('contenedor_ingredientes');
-            if (contenedor) {
-                contenedor.innerHTML = ''; // Limpia campos iniciales
-                datos.ingredientes.forEach(ing => this.agregarIngrediente(ing));
+                        const bloque = crearBloqueIngrediente(idx + 1, idIng, nomIng, cantIng, uniIng);
+                        contenedorIngredientes.appendChild(bloque);
+                    });
+                } else {
+                    contenedorIngredientes.appendChild(crearBloqueIngrediente(1));
+                }
+            }
+        } catch (err) {
+            console.error('Error al cargar ingredientes del plato:', err);
+            if (contenedorIngredientes && contenedorIngredientes.children.length === 0) {
+                contenedorIngredientes.appendChild(crearBloqueIngrediente(1));
             }
         }
     }
-};
 
-// Asignación de datos al cargar el DOM
-document.addEventListener('DOMContentLoaded', function() {
-    REMY.cargarPlatoExistente({
-        nombre: 'Ceviche Mixto Especial',
-        descripcion: 'Ceviche fresco marinado con marinada de limón, cebolla morada, maíz choclo y cilantro.',
-        categoria: 'Entrada',
-        imagen: 'imagenes/ceviche.jpg',
-        activo: true,
-        ingredientes: [
-            'Camarón',
-            'Pescado Blanco',
-            'Limón',
-            'Cebolla Morada',
-            'Cilantro'
-        ]
-    });
+    // Modal e interacciones de la interfaz
+    if (inputFoto) {
+        inputFoto.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => imgPreview.src = event.target.result;
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    if (inputCategoria) {
+        inputCategoria.addEventListener('click', () => {
+            if (modalCategoria && typeof modalCategoria.showModal === 'function') {
+                modalCategoria.showModal();
+            }
+        });
+    }
+
+    const listaCategorias = document.getElementById('lista_categorias');
+    if (listaCategorias) {
+        listaCategorias.addEventListener('click', (e) => {
+            if (e.target.tagName === 'LI') {
+                inputCategoria.value = e.target.getAttribute('data-valor');
+                if (btnLimpiarCat) btnLimpiarCat.classList.remove('oculto');
+                modalCategoria.close();
+            }
+        });
+    }
+
+    if (btnLimpiarCat) {
+        btnLimpiarCat.addEventListener('click', (e) => {
+            e.stopPropagation();
+            inputCategoria.value = '';
+            btnLimpiarCat.classList.add('oculto');
+        });
+    }
+
+    if (btnCerrarModalCat) {
+        btnCerrarModalCat.addEventListener('click', () => modalCategoria.close());
+    }
+
+    if (contenedorIngredientes) {
+        contenedorIngredientes.addEventListener('click', (e) => {
+            if (e.target.classList.contains('input-ingrediente-nombre')) {
+                itemIngredienteActual = e.target.closest('.item-ingrediente-bloque');
+                if (modalIngredientes && typeof modalIngredientes.showModal === 'function') {
+                    modalIngredientes.showModal();
+                }
+            }
+
+            if (e.target.classList.contains('btn-limpiar')) {
+                e.stopPropagation();
+                const bloque = e.target.closest('.item-ingrediente-bloque');
+                if (bloque) {
+                    bloque.querySelector('.input-ingrediente-id').value = '';
+                    bloque.querySelector('.input-ingrediente-nombre').value = '';
+                    bloque.querySelector('.unidad-medida').textContent = 'gr';
+                    e.target.classList.add('oculto');
+                }
+            }
+
+            if (e.target.classList.contains('btn-menos')) {
+                const inputCant = e.target.nextElementSibling;
+                let val = parseFloat(inputCant.value) || 1;
+                if (val > 1) inputCant.value = val - 1;
+            }
+
+            if (e.target.classList.contains('btn-mas')) {
+                const inputCant = e.target.previousElementSibling;
+                let val = parseFloat(inputCant.value) || 0;
+                inputCant.value = val + 1;
+            }
+        });
+    }
+
+    const listaIngredientes = document.getElementById('lista_ingredientes');
+    if (listaIngredientes) {
+        listaIngredientes.addEventListener('click', (e) => {
+            const li = e.target.closest('li');
+            if (li && itemIngredienteActual) {
+                const idIngrediente = li.getAttribute('data-id');
+                const nombreIngrediente = li.getAttribute('data-nombre');
+                const unidadIngrediente = li.getAttribute('data-unidad') || 'gr';
+
+                itemIngredienteActual.querySelector('.input-ingrediente-id').value = idIngrediente;
+                
+                const inputNombre = itemIngredienteActual.querySelector('.input-ingrediente-nombre');
+                inputNombre.value = nombreIngrediente;
+
+                const btnLimpiar = itemIngredienteActual.querySelector('.btn-limpiar');
+                if (btnLimpiar) btnLimpiar.classList.remove('oculto');
+
+                const spanUnidad = itemIngredienteActual.querySelector('.unidad-medida');
+                if (spanUnidad) spanUnidad.textContent = unidadIngrediente;
+
+                modalIngredientes.close();
+            }
+        });
+    }
+
+    if (btnCerrarModalIng) {
+        btnCerrarModalIng.addEventListener('click', () => modalIngredientes.close());
+    }
+
+    if (btnAgregarIngrediente) {
+        btnAgregarIngrediente.addEventListener('click', () => {
+            const numIndex = contenedorIngredientes.querySelectorAll('.item-ingrediente-bloque').length + 1;
+            contenedorIngredientes.appendChild(crearBloqueIngrediente(numIndex));
+        });
+    }
+
+    if (btnQuitarIngrediente) {
+        btnQuitarIngrediente.addEventListener('click', () => {
+            const items = contenedorIngredientes.querySelectorAll('.item-ingrediente-bloque');
+            if (items.length > 1) {
+                contenedorIngredientes.removeChild(items[items.length - 1]);
+            }
+        });
+    }
+
+    // Submit (Actualizar Plato)
+    if (formModificarPlato) {
+        formModificarPlato.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(formModificarPlato);
+            formData.append('estado', inputEstado && inputEstado.checked ? 'Activo' : 'Inactivo');
+
+            try {
+                const res = await fetch(`/api/platos/${id_plato}`, {
+                    method: 'PUT',
+                    body: formData
+                });
+
+                const resultado = await res.json();
+
+                if (res.ok && resultado.status === 'success') {
+                    alert('Plato modificado con éxito.');
+                    window.location.href = '/platos_menu';
+                } else {
+                    alert('Error: ' + (resultado.message || 'No se pudo actualizar el plato.'));
+                }
+            } catch (err) {
+                console.error('Error de red/servidor:', err);
+                alert('No se pudo conectar con el servidor.');
+            }
+        });
+    }
+
+    await cargarCatalogoIngredientes();
+    await cargarPlato();
+    await cargarIngredientesPlato();
 });
