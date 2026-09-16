@@ -76,6 +76,9 @@ def guardar_imagen_png(file_storage, id_plato, directorio_destino):
 
 @programa.route('/img_remy/<path:filename>')
 def obtener_imagen_local(filename):
+    ruta_en_platos = os.path.join(PLATS_IMG_DIR, filename)
+    if os.path.exists(ruta_en_platos):
+        return send_from_directory(PLATS_IMG_DIR, filename)
     return send_from_directory(IMG_REMY_DIR, filename)
 
 @programa.route('/menus/static/<path:filename>')
