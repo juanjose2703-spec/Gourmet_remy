@@ -10,91 +10,135 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnQuitarIngrediente = document.getElementById('btn_quitar_ingrediente');
     
     const modalCategoria = document.getElementById('modal_categoria');
-    const modalIngredientes = document.getElementById('modal_ingredientes');
     const btnCerrarModalCat = document.getElementById('btn_cerrar_modal_cat');
-    const btnCerrarModalIng = document.getElementById('btn_cerrar_modal_ing');
-    
-    let itemIngredienteActual = null;
 
-    // Cargar Ingredientes desde la API
+    // Elementos del modal de ingredientes
+    const superficieModalIngredientes = document.getElementById('superficie_modal_ingredientes');
+    const inputBuscarIngrediente = document.getElementById('input_buscar_ingrediente');
+    const listaIngredientesContenedor = document.getElementById('lista_ingredientes');
+
+    let itemIngredienteActual = null;
+    let todosLosIngredientes = [];
+
+    // Cargar ingredientes desde la API
     async function cargarIngredientesDesdeDB() {
         try {
             const respuesta = await fetch('/api/ingredientes');
-            const ingredientes = await respuesta.json();
-            const listaModal = document.getElementById('lista_ingredientes');
-            
-            if (listaModal && Array.isArray(ingredientes)) {
-                listaModal.innerHTML = ingredientes.map(ing => {
-                    // Detecta la unidad de cualquiera de las variantes posibles
-                    const unidad = ing.unidad || ing.unidad_minima || ing.unidad_medida || 'gr';
-                    
-                    // Solo imprime el nombre en el texto visual del modal
-                    return `<li data-id="${ing.id_ingrediente}" data-nombre="${ing.nombre}" data-unidad="${unidad}">${ing.nombre}</li>`;
-                }).join('');
-            }
+            if (!respuesta.ok) return;
+
+            const data = await respuesta.json();
+            const arrayBruto = Array.isArray(data) ? data : (data.data || []);
+
+            // Mapeo ajustado a tu respuesta real de MySQL (id_ingrediente, nombre, unidad_minima)
+            todosLosIngredientes = arrayBruto.map(item => ({
+                id: item.id_ingrediente || item.id || '',
+                nombre: item.nombre || '',
+                unidad: item.unidad_minima || item.unidad || item.unidad_medida || 'gr'
+            })).filter(i => i.nombre !== '');
+
         } catch (error) {
-            console.error('Error al cargar ingredientes desde MySQL:', error);
+            console.error('Error al obtener ingredientes:', error);
+            todosLosIngredientes = [];
         }
     }
 
+    // Carga inicial
     cargarIngredientesDesdeDB();
 
-    // Manejo de Vista Previa de Imagen
-    if (inputFoto) {
-        inputFoto.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => imgPreview.src = e.target.result;
-                reader.readAsDataURL(file);
+    // Renderizar tarjetas en la ventana emergente
+    function renderizarIngredientes(lista) {
+        if (!listaIngredientesContenedor) return;
+        listaIngredientesContenedor.innerHTML = '';
+
+        if (!lista || lista.length === 0) {
+            listaIngredientesContenedor.innerHTML = `
+                <p style="text-align:center; color:#545454; padding:20px; font-weight:700; font-size:0.85rem;">
+                    No se encontraron ingredientes.
+                </p>`;
+            return;
+        }
+
+        lista.forEach(ing => {
+            const tarjeta = document.createElement('div');
+            tarjeta.className = 'tarjeta-ingrediente-item';
+
+            tarjeta.addEventListener('click', () => {
+                if (itemIngredienteActual) {
+                    const inputId = itemIngredienteActual.querySelector('.input-ingrediente-id');
+                    const inputNombre = itemIngredienteActual.querySelector('.input-ingrediente-nombre');
+                    const btnLimpiar = itemIngredienteActual.querySelector('.btn-limpiar');
+                    const spanUnidad = itemIngredienteActual.querySelector('.unidad-medida');
+
+                    if (inputId) inputId.value = ing.id;
+                    if (inputNombre) inputNombre.value = ing.nombre;
+                    if (btnLimpiar) btnLimpiar.classList.remove('oculto');
+                    if (spanUnidad) spanUnidad.textContent = ing.unidad;
+                }
+                cerrarSuperficieIngredientes();
+            });
+
+            tarjeta.innerHTML = `
+                <span class="nombre-ing">${ing.nombre}</span>
+                <span class="unidad-ing">(${ing.unidad})</span>
+            `;
+            listaIngredientesContenedor.appendChild(tarjeta);
+        });
+    }
+
+    // Buscador en vivo
+    if (inputBuscarIngrediente) {
+        inputBuscarIngrediente.addEventListener('input', () => {
+            const texto = inputBuscarIngrediente.value.toLowerCase().trim();
+            if (texto === '') {
+                renderizarIngredientes(todosLosIngredientes);
+                return;
             }
+            const filtrados = todosLosIngredientes.filter(i => 
+                i.nombre.toLowerCase().includes(texto)
+            );
+            renderizarIngredientes(filtrados);
         });
     }
 
-    // Modal Categoría
-    if (inputCategoria) {
-        inputCategoria.addEventListener('click', () => {
-            if (modalCategoria && typeof modalCategoria.showModal === 'function') {
-                modalCategoria.showModal();
-            }
+    // Abrir modal
+    async function abrirSuperficieIngredientes() {
+        if (inputBuscarIngrediente) inputBuscarIngrediente.value = '';
+
+        if (todosLosIngredientes.length === 0) {
+            await cargarIngredientesDesdeDB();
+        }
+
+        renderizarIngredientes(todosLosIngredientes);
+        if (superficieModalIngredientes) superficieModalIngredientes.classList.remove('oculto');
+    }
+
+    function cerrarSuperficieIngredientes() {
+        if (superficieModalIngredientes) superficieModalIngredientes.classList.add('oculto');
+        itemIngredienteActual = null;
+    }
+
+    if (superficieModalIngredientes) {
+        superficieModalIngredientes.addEventListener('click', (e) => {
+            if (e.target === superficieModalIngredientes) cerrarSuperficieIngredientes();
         });
     }
 
-    const listaCategorias = document.getElementById('lista_categorias');
-    if (listaCategorias) {
-        listaCategorias.addEventListener('click', (e) => {
-            if (e.target.tagName === 'LI') {
-                inputCategoria.value = e.target.getAttribute('data-valor');
-                btnLimpiarCat.classList.remove('oculto');
-                modalCategoria.close();
-            }
-        });
-    }
-
-    if (btnLimpiarCat) {
-        btnLimpiarCat.addEventListener('click', (e) => {
-            e.stopPropagation();
-            inputCategoria.value = '';
-            btnLimpiarCat.classList.add('oculto');
-        });
-    }
-
-    if (btnCerrarModalCat) {
-        btnCerrarModalCat.addEventListener('click', () => modalCategoria.close());
-    }
-
-    // Abrir Modal de Ingredientes y delegación para botones X y +/-
+    // Eventos al tocar el campo de ingrediente
     if (contenedorIngredientes) {
         contenedorIngredientes.addEventListener('click', (e) => {
-            // Abrir modal de selección
-            if (e.target.classList.contains('input-ingrediente-nombre')) {
-                itemIngredienteActual = e.target.closest('.item-ingrediente-bloque');
-                if (modalIngredientes && typeof modalIngredientes.showModal === 'function') {
-                    modalIngredientes.showModal();
+            const inputTarget = e.target.closest('.input-ingrediente-nombre') || e.target.closest('.cont-input-wrapper');
+            
+            if (inputTarget) {
+                if (e.target.classList.contains('btn-limpiar')) return;
+
+                const bloque = e.target.closest('.item-ingrediente-bloque');
+                if (bloque) {
+                    itemIngredienteActual = bloque;
+                    abrirSuperficieIngredientes();
                 }
             }
 
-            // Botón Limpiar (X) en Ingrediente
+            // Limpiar selección
             if (e.target.classList.contains('btn-limpiar')) {
                 e.stopPropagation();
                 const bloque = e.target.closest('.item-ingrediente-bloque');
@@ -106,16 +150,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // Botón Menos (-) en Cantidad de ingrediente
+            // Controles de cantidad (- / +)
             if (e.target.classList.contains('btn-menos')) {
                 const inputCant = e.target.nextElementSibling;
                 let val = parseFloat(inputCant.value) || 1;
-                if (val > 1) {
-                    inputCant.value = val - 1;
-                }
+                if (val > 1) inputCant.value = val - 1;
             }
 
-            // Botón Más (+) en Cantidad de ingrediente
             if (e.target.classList.contains('btn-mas')) {
                 const inputCant = e.target.previousElementSibling;
                 let val = parseFloat(inputCant.value) || 0;
@@ -124,38 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Selección de Ingrediente dentro del Modal
-    const listaIngredientes = document.getElementById('lista_ingredientes');
-    if (listaIngredientes) {
-        listaIngredientes.addEventListener('click', (e) => {
-            const li = e.target.closest('li');
-            if (li && itemIngredienteActual) {
-                const idIngrediente = li.getAttribute('data-id');
-                const nombreIngrediente = li.getAttribute('data-nombre');
-                const unidadIngrediente = li.getAttribute('data-unidad') || 'gr';
-
-                itemIngredienteActual.querySelector('.input-ingrediente-id').value = idIngrediente;
-                
-                const inputNombre = itemIngredienteActual.querySelector('.input-ingrediente-nombre');
-                inputNombre.value = nombreIngrediente;
-                
-                const btnLimpiar = itemIngredienteActual.querySelector('.btn-limpiar');
-                if (btnLimpiar) btnLimpiar.classList.remove('oculto');
-
-                // Actualiza la unidad de medida al lado de los botones + / -
-                const spanUnidad = itemIngredienteActual.querySelector('.unidad-medida');
-                if (spanUnidad) spanUnidad.textContent = unidadIngrediente;
-
-                modalIngredientes.close();
-            }
-        });
-    }
-
-    if (btnCerrarModalIng) {
-        btnCerrarModalIng.addEventListener('click', () => modalIngredientes.close());
-    }
-
-    // Agregar nueva fila de Ingrediente
+    // Agregar nueva fila
     if (btnAgregarIngrediente) {
         btnAgregarIngrediente.addEventListener('click', () => {
             const cantidad = contenedorIngredientes.querySelectorAll('.item-ingrediente-bloque').length + 1;
@@ -184,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Eliminar última fila de Ingrediente
+    // Quitar fila
     if (btnQuitarIngrediente) {
         btnQuitarIngrediente.addEventListener('click', () => {
             const items = contenedorIngredientes.querySelectorAll('.item-ingrediente-bloque');
@@ -194,11 +204,54 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Guardar Formulario
+    // Vista previa de imagen
+    if (inputFoto) {
+        inputFoto.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => imgPreview.src = e.target.result;
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // Modal Categorías
+    if (inputCategoria) {
+        inputCategoria.addEventListener('click', () => {
+            if (modalCategoria && typeof modalCategoria.showModal === 'function') {
+                modalCategoria.showModal();
+            }
+        });
+    }
+
+    const listaCategorias = document.getElementById('lista_categorias');
+    if (listaCategorias) {
+        listaCategorias.addEventListener('click', (e) => {
+            if (e.target.tagName === 'LI') {
+                inputCategoria.value = e.target.getAttribute('data-valor');
+                if (btnLimpiarCat) btnLimpiarCat.classList.remove('oculto');
+                modalCategoria.close();
+            }
+        });
+    }
+
+    if (btnLimpiarCat) {
+        btnLimpiarCat.addEventListener('click', (e) => {
+            e.stopPropagation();
+            inputCategoria.value = '';
+            btnLimpiarCat.classList.add('oculto');
+        });
+    }
+
+    if (btnCerrarModalCat) {
+        btnCerrarModalCat.addEventListener('click', () => modalCategoria.close());
+    }
+
+    // Enviar formulario
     if (formAnadirPlato) {
         formAnadirPlato.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
             const formData = new FormData(formAnadirPlato);
 
             try {
@@ -215,7 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     alert('Error: ' + (resultado.message || 'No se pudo guardar el plato.'));
                 }
             } catch (error) {
-                console.error('Error de red/servidor:', error);
+                console.error('Error al guardar plato:', error);
                 alert('No se pudo conectar con el servidor.');
             }
         });

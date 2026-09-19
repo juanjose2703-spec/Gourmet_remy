@@ -96,6 +96,7 @@
             <button type="submit" id="btn_submit_plato" class="btn-submit fondo-verde letra-blanca">Añadir Plato</button>
         </form>
 
+        <!-- MODAL CATEGORÍA -->
         <dialog id="modal_categoria" class="modal-overlay">
             <div class="modal-contenido">
                 <h3>Selecciona una Categoría</h3>
@@ -109,13 +110,21 @@
             </div>
         </dialog>
 
-        <dialog id="modal_ingredientes" class="modal-overlay">
-            <div class="modal-contenido">
-                <h3>Seleccionar Ingrediente</h3>
-                <ul class="lista-opciones-modal" id="lista_ingredientes"></ul>
-                <button type="button" class="btn-cerrar-modal" id="btn_cerrar_modal_ing">Cerrar</button>
+        <!-- MODAL DE INGREDIENTES -->
+<div id="superficie_modal_ingredientes" class="superficie-overlay oculto">
+    <div class="superficie-contenido">
+        <div class="header-superficie">
+            <h2 id="titulo_superficie_ing">Seleccionar Ingrediente</h2>
+            <div class="cont-buscador">
+                <input type="text" id="input_buscar_ingrediente" placeholder="Buscar ingrediente..." autocomplete="off">
+                <svg class="ico-buscar" viewBox="0 0 256 256" fill="currentColor">
+                    <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/>
+                </svg>
             </div>
-        </dialog>
+        </div>
+        <div class="lista-platos" id="lista_ingredientes"></div>
+    </div>
+</div>
     </main>
 
     <script src="/platos/static/js/crear_plato.js"></script>
