@@ -8,7 +8,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnFlotantePlatos = document.getElementById('btn_flotante_platos');
     const btnFlotanteMenu   = document.getElementById('btn_flotante_menu');
 
+    // Elementos para el Menú Lateral en Móvil
+    const btnMenuMovil = document.getElementById('btn_menu_movil');
+    const barraLateral = document.getElementById('barra_lateral_nav');
+
     const IMAGEN_DEFAULT = '/static/img/dummy_remy.png';
+
+    // ========== CONTROL MENÚ LATERAL MÓVIL ==========
+    if (btnMenuMovil && barraLateral) {
+        // Abrir/cerrar menú al hacer clic en el botón hamburguesa
+        btnMenuMovil.addEventListener('click', (e) => {
+            e.stopPropagation();
+            barraLateral.classList.toggle('menu-movil-abierto');
+        });
+
+        // Cerrar menú al hacer clic en cualquier parte fuera de la barra lateral
+        document.addEventListener('click', (e) => {
+            if (barraLateral.classList.contains('menu-movil-abierto')) {
+                if (!barraLateral.contains(e.target) && e.target !== btnMenuMovil) {
+                    barraLateral.classList.remove('menu-movil-abierto');
+                }
+            }
+        });
+    }
 
     function recortarTexto(texto, maxCaracteres) {
         if (!texto) return '';
@@ -50,8 +72,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.matches) {
             secColPlatos.classList.remove('oculto-movil');
             secColMenu.classList.remove('oculto-movil');
+            if (barraLateral) barraLateral.classList.remove('menu-movil-abierto');
         } else {
-            if (pestaMenu.classList.contains('activa')) {
+            if (pestaMenu && pestaMenu.classList.contains('activa')) {
                 mostrarSeccion('menu');
             } else {
                 mostrarSeccion('platos');
@@ -74,122 +97,134 @@ document.addEventListener('DOMContentLoaded', () => {
     verificarTamanoPantalla(mediaQueryPC);
 
     // ========== CARGAR PLATOS ==========
-async function cargarPlatos() {
-    try {
-        const response = await fetch('/api/platos');
-        const json = await response.json();
-        const data = Array.isArray(json) ? json : (json.data || []);
+    async function cargarPlatos() {
+        try {
+            const response = await fetch('/api/platos');
+            const json = await response.json();
+            const data = Array.isArray(json) ? json : (json.data || []);
 
-        // Ordena estrictamente de la fecha más reciente a la más antigua
-        data.sort((a, b) => {
-            const fechaA = new Date(a.fecha_creacion || 0);
-            const fechaB = new Date(b.fecha_creacion || 0);
-            
-            // Si las fechas son iguales, desempata por ID
-            if (fechaB - fechaA === 0) {
-                return (b.id_plato || '').localeCompare(a.id_plato || '');
-            }
-            return fechaB - fechaA;
-        });
+            data.sort((a, b) => {
+                const fechaA = new Date(a.fecha_creacion || 0);
+                const fechaB = new Date(b.fecha_creacion || 0);
+                if (fechaB - fechaA === 0) {
+                    return (b.id_plato || '').localeCompare(a.id_plato || '');
+                }
+                return fechaB - fechaA;
+            });
 
-        const contenedor = document.querySelector('#sec_col_platos .lista-tarjetas-grid');
-        contenedor.innerHTML = '';
+            const contenedor = document.querySelector('#sec_col_platos .lista-tarjetas-grid');
+            if (!contenedor) return;
+            contenedor.innerHTML = '';
 
-        data.forEach(plato => {
-            const categorias = {1: 'Entrada', 2: 'Plato Fuerte', 3: 'Postre', 4: 'Bebida'};
-            const catId = plato.categoria || plato.id_categoria;
-            const categoria = categorias[catId] || 'Sin categoría';
-            const fecha = plato.fecha_creacion ? plato.fecha_creacion.split('T')[0] : 'Sin fecha';
-            const imagen = obtenerRutaImagen(plato.img_plato);
-            const opacidad = plato.estado === 'Inactivo' ? 'style="opacity:0.4"' : '';
-            const nombreFormateado = recortarTexto(plato.nombre.toUpperCase(), 30);
-            const descripcionFormateada = recortarTexto(plato.descripcion, 90);
+            data.forEach(plato => {
+                const categorias = {1: 'Entrada', 2: 'Plato Fuerte', 3: 'Postre', 4: 'Bebida'};
+                const catId = plato.categoria || plato.id_categoria;
+                const categoria = categorias[catId] || 'Sin categoría';
+                const fecha = plato.fecha_creacion ? plato.fecha_creacion.split('T')[0] : 'Sin fecha';
+                const imagen = obtenerRutaImagen(plato.img_plato);
+                const opacidad = plato.estado === 'Inactivo' ? 'style="opacity:0.4"' : '';
+                const nombreFormateado = recortarTexto(plato.nombre.toUpperCase(), 30);
+                const descripcionFormateada = recortarTexto(plato.descripcion, 90);
 
-            contenedor.innerHTML += `
-                <a href="/detalle_plato/${plato.id_plato}" class="tarjeta-plato" ${opacidad}>
-                    <figure class="foto-plato">
-                        <img src="${imagen}" alt="${plato.nombre}" onerror="this.src='${IMAGEN_DEFAULT}'">
-                    </figure>
-                    <div class="info-plato">
-                        <h3 class="nombre-plato letra-azul-dark">${nombreFormateado}</h3>
-                        <p class="desc-plato">${descripcionFormateada}</p>
-                        <p class="meta-plato">Categoría: <strong>${categoria}</strong></p>
-                        <p class="meta-plato">Fecha creación: <strong>${fecha}</strong></p>
-                    </div>
-                </a>
-            `;
-        });
-    } catch (error) {
-        console.error('Error al cargar platos:', error);
+                contenedor.innerHTML += `
+                    <a href="/detalle_plato/${plato.id_plato}" class="tarjeta-plato" ${opacidad}>
+                        <figure class="foto-plato">
+                            <img src="${imagen}" alt="${plato.nombre}" onerror="this.src='${IMAGEN_DEFAULT}'">
+                        </figure>
+                        <div class="info-plato">
+                            <h3 class="nombre-plato letra-azul-dark">${nombreFormateado}</h3>
+                            <p class="desc-plato">${descripcionFormateada}</p>
+                            <p class="meta-plato">Categoría: <strong>${categoria}</strong></p>
+                            <p class="meta-plato">Fecha creación: <strong>${fecha}</strong></p>
+                        </div>
+                    </a>
+                `;
+            });
+        } catch (error) {
+            console.error('Error al cargar platos:', error);
+        }
     }
-}
 
     // ========== CARGAR MENUS ==========
-async function cargarMenus() {
-    try {
-        const response = await fetch('/api/menus');
-        const json = await response.json();
-        // Soporta array directo o {status, data}
-        const data = Array.isArray(json) ? json : (json.data || []);
+    async function cargarMenus() {
+        try {
+            const response = await fetch('/api/menus');
+            const json = await response.json();
+            const data = Array.isArray(json) ? json : (json.data || []);
 
-        // Ordena estrictamente de la fecha más reciente a la más antigua
-        data.sort((a, b) => {
-            const fechaA = new Date(a.fecha_creacion || 0);
-            const fechaB = new Date(b.fecha_creacion || 0);
-            
-            // Si las fechas son iguales o no existen, desempata por ID
-            if (fechaB - fechaA === 0) {
-                return (b.id_menu || '').localeCompare(a.id_menu || '');
-            }
-            return fechaB - fechaA;
-        });
+            data.sort((a, b) => {
+                const fechaA = new Date(a.fecha_creacion || 0);
+                const fechaB = new Date(b.fecha_creacion || 0);
+                if (fechaB - fechaA === 0) {
+                    return (b.id_menu || '').localeCompare(a.id_menu || '');
+                }
+                return fechaB - fechaA;
+            });
 
-        const contenedor = document.querySelector('#sec_col_menu .lista-tarjetas-grid');
-        contenedor.innerHTML = '';
+            const contenedor = document.querySelector('#sec_col_menu .lista-tarjetas-grid');
+            if (!contenedor) return;
+            contenedor.innerHTML = '';
 
-        data.forEach(menu => {
-            const platos = menu.platos || [];
-            const opacidad = menu.estado === 'Inactivo' ? 'style="opacity:0.4"' : '';
-            const precio = menu.precio ? `$${menu.precio.toLocaleString('es-CO')}` : '$0';
-            const tituloMenuFormateado = recortarTexto(menu.nombre, 30);
+            data.forEach(menu => {
+                const platos = menu.platos || [];
+                const opacidad = menu.estado === 'Inactivo' ? 'style="opacity:0.4"' : '';
+                const precio = menu.precio ? `$${menu.precio.toLocaleString('es-CO')}` : '$0';
+                const tituloMenuFormateado = recortarTexto(menu.nombre, 30);
 
-            const platoPrincipal = platos.find(p => p.categoria === 2);
-            const entrada        = platos.find(p => p.categoria === 1);
-            const postre         = platos.find(p => p.categoria === 3);
-            const bebida         = platos.find(p => p.categoria === 4);
+                // Identificar los platos por categoría: 1=Entrada, 2=Plato Fuerte, 3=Postre, 4=Bebida
+                const platoPrincipal = platos.find(p => p.categoria === 2 || p.id_categoria === 2);
+                const entrada        = platos.find(p => p.categoria === 1 || p.id_categoria === 1);
+                const postre         = platos.find(p => p.categoria === 3 || p.id_categoria === 3);
+                const bebida         = platos.find(p => p.categoria === 4 || p.id_categoria === 4);
 
-            let mosaico = '';
+                let mosaico = '';
 
-            const imgPrincipal = platoPrincipal ? obtenerRutaImagen(platoPrincipal.img_plato) : IMAGEN_DEFAULT;
-            const altPrincipal = platoPrincipal ? platoPrincipal.nombre : 'Plato fuerte';
-            mosaico += `<figure class="img-menu-ppal"><img src="${imgPrincipal}" alt="${altPrincipal}" onerror="this.src='${IMAGEN_DEFAULT}'"></figure>`;
+                // 1. Imagen Principal (Siempre Plato Fuerte)
+                const imgPrincipal = platoPrincipal ? obtenerRutaImagen(platoPrincipal.img_plato) : IMAGEN_DEFAULT;
+                const altPrincipal = platoPrincipal ? platoPrincipal.nombre : 'Plato fuerte';
+                mosaico += `<figure class="img-menu-ppal"><img src="${imgPrincipal}" alt="${altPrincipal}" onerror="this.src='${IMAGEN_DEFAULT}'"></figure>`;
 
-            if (entrada) {
-                mosaico += `<figure class="img-menu-sec"><img src="${obtenerRutaImagen(entrada.img_plato)}" alt="${entrada.nombre}" onerror="this.src='${IMAGEN_DEFAULT}'"></figure>`;
-            }
-            if (postre) {
-                mosaico += `<figure class="img-menu-sec"><img src="${obtenerRutaImagen(postre.img_plato)}" alt="${postre.nombre}" onerror="this.src='${IMAGEN_DEFAULT}'"></figure>`;
-            }
-            if (bebida) {
-                mosaico += `<figure class="img-menu-sec img-ancho-completo"><img src="${obtenerRutaImagen(bebida.img_plato)}" alt="${bebida.nombre}" onerror="this.src='${IMAGEN_DEFAULT}'"></figure>`;
-            }
+                // Obtener lista de acompañantes/secundarios ordenados
+                const secundarios = [entrada, postre, bebida].filter(p => p !== undefined);
 
-            contenedor.innerHTML += `
-                <a href="/detalle_menu/${menu.id_menu}" class="tarjeta-menu-compuesta" ${opacidad}>
-                    <div class="mosaico-imagenes-menu">
-                        ${mosaico}
-                    </div>
-                    <div class="info-tarjeta-menu">
-                        <h4 class="titulo-menu letra-negro">${tituloMenuFormateado}</h4>
-                        <span class="precio-menu letra-verde">${precio}</span>
-                    </div>
-                </a>
-            `;
-        });
-    } catch (error) {
-        console.error('Error al cargar menús:', error);
+                if (platos.length === 3) {
+                    // Para 3 platos: Los 2 adicionales van en los recuadros superiores derechos
+                    secundarios.forEach((p, idx) => {
+                        mosaico += `<figure class="img-menu-sec img-cuadrada-sup-${idx + 1}">
+                            <img src="${obtenerRutaImagen(p.img_plato)}" alt="${p.nombre}" onerror="this.src='${IMAGEN_DEFAULT}'">
+                        </figure>`;
+                    });
+                    // Recuadro inferior alargado queda vacío
+                    mosaico += `<figure class="img-menu-sec img-ancho-completo vacia"></figure>`;
+                } else {
+                    // Caso de 4 tiempos (se renderizan todas las áreas asignadas)
+                    if (entrada) {
+                        mosaico += `<figure class="img-menu-sec"><img src="${obtenerRutaImagen(entrada.img_plato)}" alt="${entrada.nombre}" onerror="this.src='${IMAGEN_DEFAULT}'"></figure>`;
+                    }
+                    if (postre) {
+                        mosaico += `<figure class="img-menu-sec"><img src="${obtenerRutaImagen(postre.img_plato)}" alt="${postre.nombre}" onerror="this.src='${IMAGEN_DEFAULT}'"></figure>`;
+                    }
+                    if (bebida) {
+                        mosaico += `<figure class="img-menu-sec img-ancho-completo"><img src="${obtenerRutaImagen(bebida.img_plato)}" alt="${bebida.nombre}" onerror="this.src='${IMAGEN_DEFAULT}'"></figure>`;
+                    }
+                }
+
+                contenedor.innerHTML += `
+                    <a href="/detalle_menu/${menu.id_menu}" class="tarjeta-menu-compuesta" ${opacidad}>
+                        <div class="mosaico-imagenes-menu">
+                            ${mosaico}
+                        </div>
+                        <div class="info-tarjeta-menu">
+                            <h4 class="titulo-menu letra-negro">${tituloMenuFormateado}</h4>
+                            <span class="precio-menu letra-verde">${precio}</span>
+                        </div>
+                    </a>
+                `;
+            });
+        } catch (error) {
+            console.error('Error al cargar menús:', error);
+        }
     }
-}
 
     cargarPlatos();
     cargarMenus();
