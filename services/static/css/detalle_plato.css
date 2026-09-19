@@ -148,6 +148,7 @@ header#cabecera_detalle_plato .contenido-cabecera {
 
 .bloque-informacion-plato {
     gap: 0.6rem;
+    margin-top: 1rem;
     padding-top: 0.4rem;
 }
 
