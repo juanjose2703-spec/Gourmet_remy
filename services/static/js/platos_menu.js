@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const secColPlatos = document.getElementById('sec_col_platos');
     const secColMenu = document.getElementById('sec_col_menu');
     const mediaQueryPC = window.matchMedia('(min-width: 1020px)');
+    const btnFlotantePlatos = document.getElementById('btn_flotante_platos');
+    const btnFlotanteMenu   = document.getElementById('btn_flotante_menu');
 
     const IMAGEN_DEFAULT = '/static/img/dummy_remy.png';
 
@@ -22,23 +24,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function mostrarSeccion(seccionActivar) {
-        if (mediaQueryPC.matches) return;
-        if (seccionActivar === 'platos') {
-            secColPlatos.classList.remove('oculto-movil');
-            secColPlatos.classList.add('visible');
-            secColMenu.classList.add('oculto-movil');
-            secColMenu.classList.remove('visible');
-            pestaPlatos.classList.add('activa');
-            pestaMenu.classList.remove('activa');
-        } else if (seccionActivar === 'menu') {
-            secColMenu.classList.remove('oculto-movil');
-            secColMenu.classList.add('visible');
-            secColPlatos.classList.add('oculto-movil');
-            secColPlatos.classList.remove('visible');
-            pestaMenu.classList.add('activa');
-            pestaPlatos.classList.remove('activa');
-        }
+    if (mediaQueryPC.matches) return;
+    if (seccionActivar === 'platos') {
+        secColPlatos.classList.remove('oculto-movil');
+        secColPlatos.classList.add('visible');
+        secColMenu.classList.add('oculto-movil');
+        secColMenu.classList.remove('visible');
+        pestaPlatos.classList.add('activa');
+        pestaMenu.classList.remove('activa');
+        if (btnFlotantePlatos) btnFlotantePlatos.style.display = '';
+        if (btnFlotanteMenu)   btnFlotanteMenu.style.display   = 'none';
+    } else if (seccionActivar === 'menu') {
+        secColMenu.classList.remove('oculto-movil');
+        secColMenu.classList.add('visible');
+        secColPlatos.classList.add('oculto-movil');
+        secColPlatos.classList.remove('visible');
+        pestaMenu.classList.add('activa');
+        pestaPlatos.classList.remove('activa');
+        if (btnFlotanteMenu)   btnFlotanteMenu.style.display   = '';
+        if (btnFlotantePlatos) btnFlotantePlatos.style.display = 'none';
     }
+}
 
     function verificarTamanoPantalla(e) {
         if (e.matches) {
