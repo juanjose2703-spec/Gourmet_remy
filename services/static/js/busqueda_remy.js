@@ -20,6 +20,20 @@ function inicializarBusquedaREMY() {
         return `/img_remy/${img}`;
     }
 
+    // Función para manejar el clic y la navegación según el tipo de registro
+    function redirigirADetalle(id, tipo) {
+        const tipoLimpio = tipo ? tipo.toLowerCase().trim() : '';
+
+        if (tipoLimpio === 'plato') {
+            window.location.href = `/detalle_plato/${id}`;
+        } else if (tipoLimpio === 'menú' || tipoLimpio === 'menu') {
+            window.location.href = `/detalle_menu/${id}`;
+        } else if (tipoLimpio === 'ingrediente') {
+            // Ruta prehecha pero sin direccionar a nada aún
+            console.log(`Detalle de ingrediente reservado (ID: ${id})`);
+        }
+    }
+
     async function buscar() {
         const q = inputBusqueda.value.trim();
 
@@ -44,8 +58,11 @@ function inicializarBusquedaREMY() {
 
                 contenedor.innerHTML += `
                     <article class="tarjeta-item-resultado" 
+                            data-id="${item.id_registro}"
+                            data-tipo="${item.tipo}"
                             data-titulo="${item.nombre ? item.nombre.toLowerCase() : ''}" 
-                            data-categoria="${item.tipo ? item.tipo.toLowerCase() : ''}">
+                            data-categoria="${item.tipo ? item.tipo.toLowerCase() : ''}"
+                            style="cursor: pointer;">
                         <figure class="cont-img-tarjeta">
                             <img src="${rutaImagen}" 
                                 alt="${item.nombre}" 
@@ -61,6 +78,17 @@ function inicializarBusquedaREMY() {
                     </article>
                 `;
             });
+
+            // Asignar los eventos de clic a cada tarjeta recién renderizada
+            const tarjetas = contenedor.querySelectorAll('.tarjeta-item-resultado');
+            tarjetas.forEach(tarjeta => {
+                tarjeta.addEventListener('click', () => {
+                    const id = tarjeta.getAttribute('data-id');
+                    const tipo = tarjeta.getAttribute('data-tipo');
+                    redirigirADetalle(id, tipo);
+                });
+            });
+
         } catch (error) {
             console.error('Error durante la búsqueda:', error);
         }

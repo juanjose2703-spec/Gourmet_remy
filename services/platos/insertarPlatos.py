@@ -3,7 +3,7 @@ Traducción de insertarPlatos.php
 Inserta un plato nuevo y su relación con ingredientes en plato_ingrediente.
 """
 from dbremy import conn
-from validaciones import generarCodigoPlato
+from validaciones import *
 from datetime import datetime
 import json
 
