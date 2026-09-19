@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    const IMAGEN_DEFAULT = '/static/img/dummy_remy.png';
+
     let campoDestinoInput = null;
     let categoriaFiltroActual = null;
     let todosLosPlatos = [];
@@ -29,6 +31,12 @@ document.addEventListener('DOMContentLoaded', () => {
         'bebida':       null
     };
 
+    function obtenerRutaImagen(img) {
+        if (!img || img.trim() === '') return IMAGEN_DEFAULT;
+        if (img.startsWith('http://') || img.startsWith('https://')) return img;
+        return `/img_remy/${img}`;
+    }
+
     async function cargarTodosLosPlatos() {
         try {
             const response = await fetch('/api/platos');
@@ -40,7 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Función auxiliar para obtener los platos pertenecientes a la categoría actual
     function obtenerPlatosCategoriaActual() {
         return todosLosPlatos.filter(p => {
             const cat = p.id_categoria !== undefined ? p.id_categoria : p.categoria;
@@ -73,6 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // === APERTURA Y BÚSQUEDA GENERAL INICIAL ===
     camposSeleccion.forEach(input => {
         input.addEventListener('click', () => {
             campoDestinoInput = input;
@@ -80,9 +88,8 @@ document.addEventListener('DOMContentLoaded', () => {
             tituloSuperficie.textContent = input.getAttribute('data-titulo') || 'Escoger plato';
             inputBuscarPlato.value = '';
             
-            // Renderiza inmediatamente los platos filtrados por categoría al abrir
-            const platosFiltrados = obtenerPlatosCategoriaActual();
-            renderizarPlatos(platosFiltrados);
+            const platosCategoria = obtenerPlatosCategoriaActual();
+            renderizarPlatos(platosCategoria);
             
             superficieModal.classList.remove('oculto');
         });
@@ -119,8 +126,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 cerrarSuperficie();
             });
 
+            const rutaImg = obtenerRutaImagen(plato.img_plato);
+
             tarjeta.innerHTML = `
-                <img src="${plato.img_plato || ''}" alt="${plato.nombre}">
+                <img src="${rutaImg}" alt="${plato.nombre}" onerror="this.src='${IMAGEN_DEFAULT}'">
                 <div class="info-plato">
                     <h3>${plato.nombre}</h3>
                     <p>${plato.descripcion || ''}</p>
@@ -132,13 +141,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     inputBuscarPlato.addEventListener('input', () => {
         const texto = inputBuscarPlato.value.toLowerCase().trim();
-        const base = obtenerPlatosCategoriaActual();
+        const basePlatos = obtenerPlatosCategoriaActual();
         
         if (texto === '') {
-            renderizarPlatos(base);
+            renderizarPlatos(basePlatos);
             return;
         }
-        renderizarPlatos(base.filter(p => p.nombre.toLowerCase().includes(texto)));
+        renderizarPlatos(basePlatos.filter(p => p.nombre.toLowerCase().includes(texto)));
     });
 
     if (inputPrecio) {
@@ -168,17 +177,26 @@ document.addEventListener('DOMContentLoaded', () => {
         const bebida      = platosSeleccionados['bebida'];
         const postre      = platosSeleccionados['postre'];
 
-        if (!platoFuerte || !entrada || !bebida) {
-            alert('El menú debe contar con mínimo 3 tiempos obligatorios: Plato fuerte, Entrada y Bebida.');
+        if (!platoFuerte) {
+            alert('El Plato Fuerte es obligatorio para la creación del menú.');
             return;
         }
 
-        const platosDelMenu = [
-            { id_plato: entrada },
-            { id_plato: platoFuerte },
-        ];
+        if (!entrada && !postre) {
+            alert('Debe seleccionar al menos una Entrada o un Postre.');
+            return;
+        }
+
+        const platosDelMenu = [];
+        if (entrada) platosDelMenu.push({ id_plato: entrada });
+        if (platoFuerte) platosDelMenu.push({ id_plato: platoFuerte });
         if (postre) platosDelMenu.push({ id_plato: postre });
-        platosDelMenu.push({ id_plato: bebida });
+        if (bebida) platosDelMenu.push({ id_plato: bebida });
+
+        if (platosDelMenu.length < 3) {
+            alert('El menú debe contener un mínimo de 3 platos.');
+            return;
+        }
 
         const data = {
             menu: {

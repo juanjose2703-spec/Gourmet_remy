@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', async () => {
 
+    const IMAGEN_DEFAULT = '/static/img/dummy_remy.png';
+
     let campoDestinoInput = null;
     let categoriaFiltroActual = null;
     let todosLosPlatos = [];
@@ -32,6 +34,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     const partes = window.location.pathname.split('/');
     const id_menu = partes[partes.length - 1];
 
+    function obtenerRutaImagen(img) {
+        if (!img || img.trim() === '') return IMAGEN_DEFAULT;
+        if (img.startsWith('http://') || img.startsWith('https://')) return img;
+        return `/img_remy/${img}`;
+    }
+
     async function cargarTodosLosPlatos() {
         try {
             const response = await fetch('/api/platos');
@@ -41,6 +49,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch (error) {
             console.error('Error al cargar platos:', error);
         }
+    }
+
+    function obtenerPlatosCategoriaActual() {
+        return todosLosPlatos.filter(p => {
+            const cat = p.id_categoria !== undefined ? p.id_categoria : p.categoria;
+            return String(cat) === String(categoriaFiltroActual);
+        });
     }
 
     async function cargarMenuExistente() {
@@ -58,19 +73,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (menu.platos && menu.platos.length > 0) {
                 menu.platos.forEach(plato => {
-                    if (plato.categoria === 1) {
+                    const cat = plato.categoria !== undefined ? plato.categoria : plato.id_categoria;
+                    if (cat === 1) {
                         document.getElementById('entrada').value = plato.nombre;
                         platosSeleccionados['entrada'] = plato.id_plato;
                         actualizarBotonLimpiar(document.getElementById('entrada'));
-                    } else if (plato.categoria === 2) {
+                    } else if (cat === 2) {
                         document.getElementById('plato_fuerte').value = plato.nombre;
                         platosSeleccionados['plato_fuerte'] = plato.id_plato;
                         actualizarBotonLimpiar(document.getElementById('plato_fuerte'));
-                    } else if (plato.categoria === 3) {
+                    } else if (cat === 3) {
                         document.getElementById('postre').value = plato.nombre;
                         platosSeleccionados['postre'] = plato.id_plato;
                         actualizarBotonLimpiar(document.getElementById('postre'));
-                    } else if (plato.categoria === 4) {
+                    } else if (cat === 4) {
                         document.getElementById('bebida').value = plato.nombre;
                         platosSeleccionados['bebida'] = plato.id_plato;
                         actualizarBotonLimpiar(document.getElementById('bebida'));
@@ -107,14 +123,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
 
+    // === APERTURA Y BÚSQUEDA GENERAL INICIAL ===
     camposSeleccion.forEach(input => {
         input.addEventListener('click', () => {
             campoDestinoInput = input;
             categoriaFiltroActual = mapaCategorias[input.id];
             tituloSuperficie.textContent = input.getAttribute('data-titulo') || 'Escoger plato';
             inputBuscarPlato.value = '';
-            const filtrados = todosLosPlatos.filter(p => p.categoria === categoriaFiltroActual);
+
+            const filtrados = obtenerPlatosCategoriaActual();
             renderizarPlatos(filtrados);
+            
             superficieModal.classList.remove('oculto');
         });
     });
@@ -150,11 +169,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 cerrarSuperficie();
             });
 
+            const rutaImg = obtenerRutaImagen(plato.img_plato);
+
             tarjeta.innerHTML = `
-                <img src="${plato.img_plato || ''}" alt="${plato.nombre}">
+                <img src="${rutaImg}" alt="${plato.nombre}" onerror="this.src='${IMAGEN_DEFAULT}'">
                 <div class="info-plato">
                     <h3>${plato.nombre}</h3>
-                    <p>${plato.descripcion}</p>
+                    <p>${plato.descripcion || ''}</p>
                 </div>
             `;
             listaPlatosContenedor.appendChild(tarjeta);
@@ -163,7 +184,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     inputBuscarPlato.addEventListener('input', () => {
         const texto = inputBuscarPlato.value.toLowerCase().trim();
-        const base = todosLosPlatos.filter(p => p.categoria === categoriaFiltroActual);
+        const base = obtenerPlatosCategoriaActual();
         if (texto === '') {
             renderizarPlatos(base);
             return;
@@ -198,17 +219,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         const bebida      = platosSeleccionados['bebida'];
         const postre      = platosSeleccionados['postre'];
 
-        if (!platoFuerte || !entrada || !bebida) {
-            alert('El menú debe contar con mínimo 3 tiempos obligatorios: Plato fuerte, Entrada y Bebida.');
+        if (!platoFuerte) {
+            alert('El Plato Fuerte es obligatorio para la modificación del menú.');
             return;
         }
 
-        const platosDelMenu = [
-            { id_plato: entrada },
-            { id_plato: platoFuerte },
-        ];
+        if (!entrada && !postre) {
+            alert('Debe seleccionar al menos una Entrada o un Postre.');
+            return;
+        }
+
+        const platosDelMenu = [];
+        if (entrada) platosDelMenu.push({ id_plato: entrada });
+        if (platoFuerte) platosDelMenu.push({ id_plato: platoFuerte });
         if (postre) platosDelMenu.push({ id_plato: postre });
-        platosDelMenu.push({ id_plato: bebida });
+        if (bebida) platosDelMenu.push({ id_plato: bebida });
+
+        if (platosDelMenu.length < 3) {
+            alert('El menú debe contener un mínimo de 3 platos.');
+            return;
+        }
 
         const data = {
             menu: {

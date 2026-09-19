@@ -76,8 +76,74 @@ main#gran_cont_ppal {
     overflow: hidden;
 }
 
+/* --- Menú Lateral General / Móvil --- */
 aside#barra_lateral_nav {
-    display: none;
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 45vw;
+    height: 55vh;
+    background-color: var(--blanco);
+    z-index: 1000;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 0;
+    box-shadow: 4px 0px 12px rgba(0, 0, 0, 0.25);
+    border-radius: 0 0 16px 0;
+    transition: left 0.3s ease-in-out;
+}
+
+aside#barra_lateral_nav.menu-movil-abierto {
+    left: 0;
+}
+
+aside#barra_lateral_nav figure#marca_remy_lat {
+    margin: 0;
+    width: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+aside#barra_lateral_nav figure#marca_remy_lat img {
+    width: 100%;
+    height: auto;
+}
+
+aside#barra_lateral_nav nav#menu_iconos_lat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+aside#barra_lateral_nav nav#menu_iconos_lat .btn-ico-lat {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    color: var(--negro);
+    cursor: pointer;
+}
+
+aside#barra_lateral_nav nav#menu_iconos_lat .btn-ico-lat svg {
+    width: 22px;
+    height: 22px;
+}
+
+aside#barra_lateral_nav nav#menu_iconos_lat .btn-ico-lat.activo {
+    color: var(--verde);
+    position: relative;
+}
+
+figure#ico_codigo {
+    width: 22px;
+}
+
+#firma_codigo_lat {
+    color: var(--negro);
 }
 
 section#cont_derecho_contenido {
@@ -395,7 +461,6 @@ div#cont_acciones_pestanas {
         height: 100vh;
     }
 
-    aside#barra_lateral_nav,
     #btn_cerrar_vista {
         display: none !important;
     }
@@ -528,6 +593,8 @@ div#cont_acciones_pestanas {
 @media screen and (min-width: 1020px) {
 
     aside#barra_lateral_nav {
+        position: static;
+        left: 0;
         background: var(--blanco);
         display: flex;
         flex-direction: column;
@@ -540,35 +607,17 @@ div#cont_acciones_pestanas {
         border-right: 1px solid #E5E5E5;
         flex-shrink: 0;
         z-index: 10;
+        box-shadow: none;
+        border-radius: 0;
+        transition: none;
     }
 
     aside#barra_lateral_nav figure#marca_remy_lat {
-        margin: 0;
         width: 55px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    aside#barra_lateral_nav figure#marca_remy_lat img {
-        width: 100%;
-        height: auto;
     }
 
     aside#barra_lateral_nav nav#menu_iconos_lat {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
         gap: 1.8rem;
-    }
-
-    aside#barra_lateral_nav nav#menu_iconos_lat .btn-ico-lat {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        color: var(--negro);
-        cursor: pointer;
     }
 
     aside#barra_lateral_nav nav#menu_iconos_lat .btn-ico-lat svg {
@@ -576,17 +625,8 @@ div#cont_acciones_pestanas {
         height: 24px;
     }
 
-    aside#barra_lateral_nav nav#menu_iconos_lat .btn-ico-lat.activo {
-        color: var(--verde);
-        position: relative;
-    }
-
     figure#ico_codigo {
         width: 24px;
-    }
-
-    #firma_codigo_lat {
-        color: var(--negro);
     }
 
     section#cont_derecho_contenido {

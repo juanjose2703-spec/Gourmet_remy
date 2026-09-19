@@ -1,3 +1,11 @@
+const IMAGEN_DEFAULT = '/static/img/dummy_remy.png';
+
+function obtenerRutaImagen(img) {
+    if (!img || img.trim() === '') return IMAGEN_DEFAULT;
+    if (img.startsWith('http://') || img.startsWith('https://')) return img;
+    return `/img_remy/${img}`;
+}
+
 async function cargarDetalleMenu() {
     const partes = window.location.pathname.split('/');
     const id_menu = partes[partes.length - 1];
@@ -40,26 +48,29 @@ async function cargarDetalleMenu() {
             swtchEstado.dispatchEvent(new Event('change'));
         }
 
-        // 3. Extraer las imágenes de los platos anidados (campo img_plato)
+        // 3. Extraer y procesar las imágenes de los platos anidados
         let imagenes = [];
         if (Array.isArray(menu.platos) && menu.platos.length > 0) {
-            imagenes = menu.platos
-                .map(plato => plato.img_plato)
-                .filter(url => url && url.trim() !== '');
+            imagenes = menu.platos.map(plato => obtenerRutaImagen(plato.img_plato));
+        }
+
+        // Si no hay imágenes válidas, asignamos la imagen dummy por defecto
+        if (imagenes.length === 0) {
+            imagenes.push(IMAGEN_DEFAULT);
         }
 
         // 4. Renderizar carrusel de imágenes
         const tiraDiapositivas = document.getElementById('tira_imagenes');
         const contPuntos = document.getElementById('cont_puntos_carrusel');
 
-        if (tiraDiapositivas && contPuntos && imagenes.length > 0) {
+        if (tiraDiapositivas && contPuntos) {
             tiraDiapositivas.innerHTML = '';
             contPuntos.innerHTML = '';
 
             imagenes.forEach((imgUrl, idx) => {
                 tiraDiapositivas.innerHTML += `
                     <figure class="item-diapositiva" style="min-width: 100%; box-sizing: border-box;">
-                        <img src="${imgUrl}" alt="${menu.nombre || 'Menú'}" class="img-fluida" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                        <img src="${imgUrl}" alt="${menu.nombre || 'Menú'}" class="img-fluida" style="width: 100%; height: 100%; object-fit: cover; display: block;" onerror="this.src='${IMAGEN_DEFAULT}'">
                     </figure>
                 `;
                 contPuntos.innerHTML += `
