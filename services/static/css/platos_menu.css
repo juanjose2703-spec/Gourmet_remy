@@ -454,6 +454,8 @@ div#cont_acciones_pestanas {
 .fondo-verde { background-color: var(--verde); }
 .letra-blanca { color: var(--blanco); }
 
+/* --- Media Queries --- */
+
 @media screen and (min-width: 700px) and (max-width: 1019px) {
 
     #gran_cont_ppal {
@@ -755,5 +757,71 @@ div#cont_acciones_pestanas {
 
     .btn-agregar-flotante .texto-btn-pc::first-letter {
         text-transform: uppercase;
+    }
+}
+
+@media screen and (max-width: 1019px) {
+
+    #btn_cerrar_vista {
+        display: none !important;
+    }
+
+    #cont_acciones_pestanas {
+        min-width: 40px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+        flex-shrink: 0 !important;
+    }
+
+    #btn_buscar_pesta {
+        display: flex !important;
+        width: 36px !important;
+        height: 36px !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex-shrink: 0 !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    #btn_buscar_pesta svg {
+        width: 22px !important;
+        height: 22px !important;
+        fill: currentColor !important;
+        display: block !important;
+        flex-shrink: 0 !important;
+    }
+
+    #btn_flotante_platos,
+    #btn_flotante_menu {
+        position: fixed !important;
+        bottom: 24px !important;
+        right: 18px !important;
+        left: auto !important;
+        top: auto !important;
+        width: 52px !important;
+        height: 52px !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        z-index: 9999 !important;
+        padding: 0 !important;
+        transform: none !important;
+    }
+
+    #btn_flotante_platos svg,
+    #btn_flotante_menu svg {
+        width: 26px !important;
+        height: 26px !important;
+        display: block !important;
+        fill: currentColor !important;
+        flex-shrink: 0 !important;
+    }
+
+    #btn_flotante_platos .texto-btn-pc,
+    #btn_flotante_menu .texto-btn-pc {
+        display: none !important;
     }
 }
