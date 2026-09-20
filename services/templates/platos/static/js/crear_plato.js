@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await respuesta.json();
             const arrayBruto = Array.isArray(data) ? data : (data.data || []);
 
-            // Mapeo ajustado a tu respuesta real de MySQL (id_ingrediente, nombre, unidad_minima)
+            // Mapeo ajustado a tu respuesta real de MySQL
             todosLosIngredientes = arrayBruto.map(item => ({
                 id: item.id_ingrediente || item.id || '',
                 nombre: item.nombre || '',
@@ -123,14 +123,31 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Eventos al tocar el campo de ingrediente
+    // Manejo de eventos dentro del contenedor de ingredientes
     if (contenedorIngredientes) {
         contenedorIngredientes.addEventListener('click', (e) => {
-            const inputTarget = e.target.closest('.input-ingrediente-nombre') || e.target.closest('.cont-input-wrapper');
-            
-            if (inputTarget) {
-                if (e.target.classList.contains('btn-limpiar')) return;
+            // 1. Limpiar selección con la X (prioritario)
+            if (e.target.classList.contains('btn-limpiar')) {
+                e.preventDefault();
+                e.stopPropagation();
+                const bloque = e.target.closest('.item-ingrediente-bloque');
+                if (bloque) {
+                    const inputId = bloque.querySelector('.input-ingrediente-id');
+                    const inputNombre = bloque.querySelector('.input-ingrediente-nombre');
+                    const spanUnidad = bloque.querySelector('.unidad-medida');
+                    
+                    if (inputId) inputId.value = '';
+                    if (inputNombre) inputNombre.value = '';
+                    if (spanUnidad) spanUnidad.textContent = 'gr';
+                    
+                    e.target.classList.add('oculto');
+                }
+                return; // Detiene la ejecución para que NO abra el modal
+            }
 
+            // 2. Abrir Modal de selección
+            const inputTarget = e.target.closest('.input-ingrediente-nombre') || e.target.closest('.cont-input-wrapper');
+            if (inputTarget) {
                 const bloque = e.target.closest('.item-ingrediente-bloque');
                 if (bloque) {
                     itemIngredienteActual = bloque;
@@ -138,19 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // Limpiar selección
-            if (e.target.classList.contains('btn-limpiar')) {
-                e.stopPropagation();
-                const bloque = e.target.closest('.item-ingrediente-bloque');
-                if (bloque) {
-                    bloque.querySelector('.input-ingrediente-id').value = '';
-                    bloque.querySelector('.input-ingrediente-nombre').value = '';
-                    bloque.querySelector('.unidad-medida').textContent = 'gr';
-                    e.target.classList.add('oculto');
-                }
-            }
-
-            // Controles de cantidad (- / +)
+            // 3. Controles de cantidad individual (- / +)
             if (e.target.classList.contains('btn-menos')) {
                 const inputCant = e.target.nextElementSibling;
                 let val = parseFloat(inputCant.value) || 1;
@@ -165,40 +170,53 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Agregar nueva fila
+    // Función para generar un nuevo bloque de ingrediente
+    function crearBloqueIngrediente() {
+        if (!contenedorIngredientes) return;
+        const cantidad = contenedorIngredientes.querySelectorAll('.item-ingrediente-bloque').length + 1;
+        const nuevoBloque = document.createElement('div');
+        nuevoBloque.className = 'item-ingrediente-bloque';
+        nuevoBloque.innerHTML = `
+            <div class="campo-form item-ingrediente">
+                <label class="lbl-ingrediente">Ingrediente ${cantidad}</label>
+                <input type="hidden" name="ingredientes[]" class="input-ingrediente-id">
+                <div class="cont-input-wrapper">
+                    <input type="text" class="input-redondeado input-ingrediente-nombre" readonly placeholder="Seleccionar...">
+                    <button type="button" class="btn-limpiar oculto">&times;</button>
+                </div>
+            </div>
+            <div class="campo-form fila-cantidad-ingrediente">
+                <label class="lbl-cantidad">Cantidad</label>
+                <div class="cont-control-cantidad">
+                    <button type="button" class="btn-cant btn-menos">-</button>
+                    <input type="number" name="cantidades[]" class="input-redondeado input-cantidad" value="1" min="1" step="any">
+                    <button type="button" class="btn-cant btn-mas">+</button>
+                    <span class="unidad-medida">gr</span>
+                </div>
+            </div>
+        `;
+        contenedorIngredientes.appendChild(nuevoBloque);
+    }
+
+    // Inicializar obligatoriamente con 2 inputs al cargar
+    if (contenedorIngredientes) {
+        contenedorIngredientes.innerHTML = ''; // Limpia el contenedor
+        crearBloqueIngrediente(); // Ingrediente 1
+        crearBloqueIngrediente(); // Ingrediente 2
+    }
+
+    // Evento para el botón Agregar (+)
     if (btnAgregarIngrediente) {
         btnAgregarIngrediente.addEventListener('click', () => {
-            const cantidad = contenedorIngredientes.querySelectorAll('.item-ingrediente-bloque').length + 1;
-            const nuevoBloque = document.createElement('div');
-            nuevoBloque.className = 'item-ingrediente-bloque';
-            nuevoBloque.innerHTML = `
-                <div class="campo-form item-ingrediente">
-                    <label class="lbl-ingrediente">Ingrediente ${cantidad}</label>
-                    <input type="hidden" name="ingredientes[]" class="input-ingrediente-id">
-                    <div class="cont-input-wrapper">
-                        <input type="text" class="input-redondeado input-ingrediente-nombre" readonly placeholder="Seleccionar...">
-                        <button type="button" class="btn-limpiar oculto">&times;</button>
-                    </div>
-                </div>
-                <div class="campo-form fila-cantidad-ingrediente">
-                    <label class="lbl-cantidad">Cantidad</label>
-                    <div class="cont-control-cantidad">
-                        <button type="button" class="btn-cant btn-menos">-</button>
-                        <input type="number" name="cantidades[]" class="input-redondeado input-cantidad" value="1" min="1" step="any">
-                        <button type="button" class="btn-cant btn-mas">+</button>
-                        <span class="unidad-medida">gr</span>
-                    </div>
-                </div>
-            `;
-            contenedorIngredientes.appendChild(nuevoBloque);
+            crearBloqueIngrediente();
         });
     }
 
-    // Quitar fila
+    // Quitar fila (-): Mínimo estricto de 2 ingredientes
     if (btnQuitarIngrediente) {
         btnQuitarIngrediente.addEventListener('click', () => {
             const items = contenedorIngredientes.querySelectorAll('.item-ingrediente-bloque');
-            if (items.length > 1) {
+            if (items.length > 2) {
                 contenedorIngredientes.removeChild(items[items.length - 1]);
             }
         });

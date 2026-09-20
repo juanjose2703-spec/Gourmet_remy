@@ -56,12 +56,14 @@
                         </div>
                     </div>
 
-                    <div class="campo-form cont-campo-toggle">
+                    <!-- CAMPO ESTADO CON TOGGLE SWITCH IMPLEMENTADO -->
+                    <div class="campo-form">
                         <label for="input_estado">Estado</label>
-                        <label class="switch">
-                            <input type="checkbox" id="input_estado" name="estado" checked>
-                            <span class="slider"></span>
-                        </label>
+                        <div class="cont-switch-estado">
+                            <input type="checkbox" id="input_estado" name="estado" class="switch-input" value="Activo">
+                            <label for="input_estado" class="switch-label"></label>
+                            <span id="texto_estado" class="texto-estado">Inactivo</span>
+                        </div>
                     </div>
                 </section>
 
@@ -97,13 +99,21 @@
             </div>
         </dialog>
 
-        <dialog id="modal_ingredientes" class="modal-overlay">
-            <div class="modal-contenido">
-                <h3>Seleccionar Ingrediente</h3>
-                <ul class="lista-opciones-modal" id="lista_ingredientes"></ul>
-                <button type="button" class="btn-cerrar-modal" id="btn_cerrar_modal_ing">Cerrar</button>
+       <!-- MODAL DE INGREDIENTES -->
+<div id="superficie_modal_ingredientes" class="superficie-overlay oculto">
+    <div class="superficie-contenido">
+        <div class="header-superficie">
+            <h2 id="titulo_superficie_ing">Seleccionar Ingrediente</h2>
+            <div class="cont-buscador">
+                <input type="text" id="input_buscar_ingrediente" placeholder="Buscar ingrediente..." autocomplete="off">
+                <svg class="ico-buscar" viewBox="0 0 256 256" fill="currentColor">
+                    <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/>
+                </svg>
             </div>
-        </dialog>
+        </div>
+        <div class="lista-platos" id="lista_ingredientes"></div>
+    </div>
+</div>
 
     </main>
 

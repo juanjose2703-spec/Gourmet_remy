@@ -14,13 +14,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     const btnQuitarIngrediente   = document.getElementById('btn_quitar_ingrediente');
 
     const modalCategoria          = document.getElementById('modal_categoria');
-    const modalIngredientes       = document.getElementById('modal_ingredientes');
     const btnCerrarModalCat       = document.getElementById('btn_cerrar_modal_cat');
-    const btnCerrarModalIng       = document.getElementById('btn_cerrar_modal_ing');
+
+    const textoEstado             = document.getElementById('texto_estado');
+
+    // Elementos del modal overlay de ingredientes
+    const superficieModalIngredientes = document.getElementById('superficie_modal_ingredientes');
+    const inputBuscarIngrediente      = document.getElementById('input_buscar_ingrediente');
+    const listaIngredientesContenedor = document.getElementById('lista_ingredientes');
 
     let itemIngredienteActual = null;
+    let todosLosIngredientes = [];
 
-    // Mapeo de IDs numéricos a los nombres textuales de las categorías
     const categoriasMap = {
         1: 'Entrada',
         2: 'Plato Fuerte',
@@ -37,25 +42,151 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (!id_plato) return;
 
-    // 1. Cargar catálogo de ingredientes para el Modal
-    async function cargarCatalogoIngredientes() {
-        try {
-            const res = await fetch('/api/ingredientes');
-            const ingredientes = await res.json();
-            const listaModal = document.getElementById('lista_ingredientes');
-
-            if (listaModal && Array.isArray(ingredientes)) {
-                listaModal.innerHTML = ingredientes.map(ing => {
-                    const unidad = ing.unidad || ing.unidad_minima || ing.unidad_medida || 'gr';
-                    return `<li data-id="${ing.id_ingrediente}" data-nombre="${ing.nombre}" data-unidad="${unidad}">${ing.nombre}</li>`;
-                }).join('');
+    // ==========================================
+    // 1. LÓGICA DE CATEGORÍAS Y ESTADO
+    // ==========================================
+    if (inputCategoria) {
+        inputCategoria.addEventListener('click', () => {
+            if (modalCategoria && typeof modalCategoria.showModal === 'function') {
+                modalCategoria.showModal();
             }
-        } catch (err) {
-            console.error('Error al cargar catálogo de ingredientes:', err);
+        });
+    }
+
+    const listaCategorias = document.getElementById('lista_categorias');
+    if (listaCategorias) {
+        listaCategorias.addEventListener('click', (e) => {
+            if (e.target.tagName === 'LI') {
+                const valorCat = e.target.getAttribute('data-valor') || e.target.textContent.trim();
+                inputCategoria.value = valorCat;
+                if (btnLimpiarCat) btnLimpiarCat.classList.remove('oculto');
+                if (modalCategoria) modalCategoria.close();
+            }
+        });
+    }
+
+    if (btnLimpiarCat) {
+        btnLimpiarCat.addEventListener('click', (e) => {
+            e.stopPropagation();
+            inputCategoria.value = '';
+            btnLimpiarCat.classList.add('oculto');
+        });
+    }
+
+    if (btnCerrarModalCat) {
+        btnCerrarModalCat.addEventListener('click', () => {
+            if (modalCategoria) modalCategoria.close();
+        });
+    }
+
+    function actualizarTextoEstado() {
+        if (textoEstado && inputEstado) {
+            textoEstado.textContent = inputEstado.checked ? 'Activo' : 'Inactivo';
         }
     }
 
-    // 2. Generador de Bloque de Ingrediente
+    if (inputEstado) {
+        inputEstado.addEventListener('change', actualizarTextoEstado);
+    }
+
+    // ==========================================
+    // 2. LÓGICA DE INGREDIENTES CON BUSCADOR
+    // ==========================================
+    async function cargarIngredientesDesdeDB() {
+        try {
+            const respuesta = await fetch('/api/ingredientes');
+            if (!respuesta.ok) return;
+
+            const data = await respuesta.json();
+            const arrayBruto = Array.isArray(data) ? data : (data.data || []);
+
+            todosLosIngredientes = arrayBruto.map(item => ({
+                id: item.id_ingrediente || item.id || '',
+                nombre: item.nombre || '',
+                unidad: item.unidad_minima || item.unidad || item.unidad_medida || 'gr'
+            })).filter(i => i.nombre !== '');
+
+        } catch (error) {
+            console.error('Error al obtener ingredientes:', error);
+            todosLosIngredientes = [];
+        }
+    }
+
+    function renderizarIngredientes(lista) {
+        if (!listaIngredientesContenedor) return;
+        listaIngredientesContenedor.innerHTML = '';
+
+        if (!lista || lista.length === 0) {
+            listaIngredientesContenedor.innerHTML = `
+                <p style="text-align:center; color:#545454; padding:20px; font-weight:700; font-size:0.85rem;">
+                    No se encontraron ingredientes.
+                </p>`;
+            return;
+        }
+
+        lista.forEach(ing => {
+            const tarjeta = document.createElement('div');
+            tarjeta.className = 'tarjeta-ingrediente-item';
+
+            tarjeta.addEventListener('click', () => {
+                if (itemIngredienteActual) {
+                    const inputId = itemIngredienteActual.querySelector('.input-ingrediente-id');
+                    const inputNombre = itemIngredienteActual.querySelector('.input-ingrediente-nombre');
+                    const btnLimpiar = itemIngredienteActual.querySelector('.btn-limpiar');
+                    const spanUnidad = itemIngredienteActual.querySelector('.unidad-medida');
+
+                    if (inputId) inputId.value = ing.id;
+                    if (inputNombre) inputNombre.value = ing.nombre;
+                    if (btnLimpiar) btnLimpiar.classList.remove('oculto');
+                    if (spanUnidad) spanUnidad.textContent = ing.unidad;
+                }
+                cerrarSuperficieIngredientes();
+            });
+
+            tarjeta.innerHTML = `
+                <span class="nombre-ing">${ing.nombre}</span>
+                <span class="unidad-ing">(${ing.unidad})</span>
+            `;
+            listaIngredientesContenedor.appendChild(tarjeta);
+        });
+    }
+
+    if (inputBuscarIngrediente) {
+        inputBuscarIngrediente.addEventListener('input', () => {
+            const texto = inputBuscarIngrediente.value.toLowerCase().trim();
+            if (texto === '') {
+                renderizarIngredientes(todosLosIngredientes);
+                return;
+            }
+            const filtrados = todosLosIngredientes.filter(i => 
+                i.nombre.toLowerCase().includes(texto)
+            );
+            renderizarIngredientes(filtrados);
+        });
+    }
+
+    async function abrirSuperficieIngredientes() {
+        if (inputBuscarIngrediente) inputBuscarIngrediente.value = '';
+
+        if (todosLosIngredientes.length === 0) {
+            await cargarIngredientesDesdeDB();
+        }
+
+        renderizarIngredientes(todosLosIngredientes);
+        if (superficieModalIngredientes) superficieModalIngredientes.classList.remove('oculto');
+    }
+
+    function cerrarSuperficieIngredientes() {
+        if (superficieModalIngredientes) superficieModalIngredientes.classList.add('oculto');
+        itemIngredienteActual = null;
+    }
+
+    if (superficieModalIngredientes) {
+        superficieModalIngredientes.addEventListener('click', (e) => {
+            if (e.target === superficieModalIngredientes) cerrarSuperficieIngredientes();
+        });
+    }
+
     function crearBloqueIngrediente(numIndex, id = '', nombre = '', cantidad = 1, unidad = 'gr') {
         const div = document.createElement('div');
         div.className = 'item-ingrediente-bloque';
@@ -83,7 +214,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         return div;
     }
 
-    // 3. Cargar datos del plato convirtiendo la categoría a su nombre correspondiente
+    // ==========================================
+    // 3. CARGAR DATOS DEL PLATO Y ESTADO
+    // ==========================================
     async function cargarPlato() {
         try {
             const res = await fetch(`/api/platos/${id_plato}`);
@@ -100,11 +233,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                         catVal = categoriasMap[catVal];
                     }
                     inputCategoria.value = catVal;
-                    if (btnLimpiarCat && catVal) btnLimpiarCat.classList.remove('oculto');
+                    if (btnLimpiarCat && catVal !== '') btnLimpiarCat.classList.remove('oculto');
                 }
 
                 if (inputEstado) {
-                    inputEstado.checked = (plato.estado === 'Activo');
+                    const valorEstado = String(plato.estado).toLowerCase().trim();
+                    inputEstado.checked = (valorEstado === 'activo' || valorEstado === '1' || valorEstado === 'true');
+                    actualizarTextoEstado();
                 }
 
                 if (imgPreview && plato.img_plato) {
@@ -118,7 +253,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // 4. Cargar ingredientes asignados al plato
     async function cargarIngredientesPlato() {
         try {
             const res = await fetch(`/api/platos/${id_plato}/ingredientes`);
@@ -133,86 +267,65 @@ document.addEventListener('DOMContentLoaded', async () => {
                         const idIng = ing.id_ingrediente || ing.id || '';
                         const nomIng = ing.nombre || '';
                         const cantIng = ing.cantidad || 1;
-                        const uniIng = ing.unidad || ing.unidad_medida || 'gr';
+                        const uniIng = ing.unidad || ing.unidad_medida || ing.unidad_minima || 'gr';
 
                         const bloque = crearBloqueIngrediente(idx + 1, idIng, nomIng, cantIng, uniIng);
                         contenedorIngredientes.appendChild(bloque);
                     });
-                } else {
-                    contenedorIngredientes.appendChild(crearBloqueIngrediente(1));
+                }
+
+                // Si trae menos de 2 ingredientes desde la BD, forzamos que existan mínimamente 2 filas
+                let totalActual = contenedorIngredientes.querySelectorAll('.item-ingrediente-bloque').length;
+                while (totalActual < 2) {
+                    totalActual++;
+                    contenedorIngredientes.appendChild(crearBloqueIngrediente(totalActual));
                 }
             }
         } catch (err) {
             console.error('Error al cargar ingredientes del plato:', err);
-            if (contenedorIngredientes && contenedorIngredientes.children.length === 0) {
+            if (contenedorIngredientes) {
+                contenedorIngredientes.innerHTML = '';
                 contenedorIngredientes.appendChild(crearBloqueIngrediente(1));
+                contenedorIngredientes.appendChild(crearBloqueIngrediente(2));
             }
         }
     }
 
-    // Modal e interacciones de la interfaz
-    if (inputFoto) {
-        inputFoto.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (event) => imgPreview.src = event.target.result;
-                reader.readAsDataURL(file);
-            }
-        });
-    }
-
-    if (inputCategoria) {
-        inputCategoria.addEventListener('click', () => {
-            if (modalCategoria && typeof modalCategoria.showModal === 'function') {
-                modalCategoria.showModal();
-            }
-        });
-    }
-
-    const listaCategorias = document.getElementById('lista_categorias');
-    if (listaCategorias) {
-        listaCategorias.addEventListener('click', (e) => {
-            if (e.target.tagName === 'LI') {
-                inputCategoria.value = e.target.getAttribute('data-valor');
-                if (btnLimpiarCat) btnLimpiarCat.classList.remove('oculto');
-                modalCategoria.close();
-            }
-        });
-    }
-
-    if (btnLimpiarCat) {
-        btnLimpiarCat.addEventListener('click', (e) => {
-            e.stopPropagation();
-            inputCategoria.value = '';
-            btnLimpiarCat.classList.add('oculto');
-        });
-    }
-
-    if (btnCerrarModalCat) {
-        btnCerrarModalCat.addEventListener('click', () => modalCategoria.close());
-    }
-
+    // ==========================================
+    // 4. EVENTOS E INTERACCIONES
+    // ==========================================
     if (contenedorIngredientes) {
         contenedorIngredientes.addEventListener('click', (e) => {
-            if (e.target.classList.contains('input-ingrediente-nombre')) {
-                itemIngredienteActual = e.target.closest('.item-ingrediente-bloque');
-                if (modalIngredientes && typeof modalIngredientes.showModal === 'function') {
-                    modalIngredientes.showModal();
-                }
-            }
-
+            // 1. Limpieza individual de un ingrediente (X)
             if (e.target.classList.contains('btn-limpiar')) {
+                e.preventDefault();
                 e.stopPropagation();
                 const bloque = e.target.closest('.item-ingrediente-bloque');
                 if (bloque) {
-                    bloque.querySelector('.input-ingrediente-id').value = '';
-                    bloque.querySelector('.input-ingrediente-nombre').value = '';
-                    bloque.querySelector('.unidad-medida').textContent = 'gr';
+                    const inputId = bloque.querySelector('.input-ingrediente-id');
+                    const inputNombre = bloque.querySelector('.input-ingrediente-nombre');
+                    const spanUnidad = bloque.querySelector('.unidad-medida');
+
+                    if (inputId) inputId.value = '';
+                    if (inputNombre) inputNombre.value = '';
+                    if (spanUnidad) spanUnidad.textContent = 'gr';
+
                     e.target.classList.add('oculto');
+                }
+                return; // Evita abrir la lista desplegable
+            }
+
+            // 2. Abrir Modal de selección
+            const inputTarget = e.target.closest('.input-ingrediente-nombre') || e.target.closest('.cont-input-wrapper');
+            if (inputTarget) {
+                const bloque = e.target.closest('.item-ingrediente-bloque');
+                if (bloque) {
+                    itemIngredienteActual = bloque;
+                    abrirSuperficieIngredientes();
                 }
             }
 
+            // 3. Controles de cantidad (- / +)
             if (e.target.classList.contains('btn-menos')) {
                 const inputCant = e.target.nextElementSibling;
                 let val = parseFloat(inputCant.value) || 1;
@@ -227,35 +340,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    const listaIngredientes = document.getElementById('lista_ingredientes');
-    if (listaIngredientes) {
-        listaIngredientes.addEventListener('click', (e) => {
-            const li = e.target.closest('li');
-            if (li && itemIngredienteActual) {
-                const idIngrediente = li.getAttribute('data-id');
-                const nombreIngrediente = li.getAttribute('data-nombre');
-                const unidadIngrediente = li.getAttribute('data-unidad') || 'gr';
-
-                itemIngredienteActual.querySelector('.input-ingrediente-id').value = idIngrediente;
-                
-                const inputNombre = itemIngredienteActual.querySelector('.input-ingrediente-nombre');
-                inputNombre.value = nombreIngrediente;
-
-                const btnLimpiar = itemIngredienteActual.querySelector('.btn-limpiar');
-                if (btnLimpiar) btnLimpiar.classList.remove('oculto');
-
-                const spanUnidad = itemIngredienteActual.querySelector('.unidad-medida');
-                if (spanUnidad) spanUnidad.textContent = unidadIngrediente;
-
-                modalIngredientes.close();
-            }
-        });
-    }
-
-    if (btnCerrarModalIng) {
-        btnCerrarModalIng.addEventListener('click', () => modalIngredientes.close());
-    }
-
+    // Botón para agregar una nueva fila (+)
     if (btnAgregarIngrediente) {
         btnAgregarIngrediente.addEventListener('click', () => {
             const numIndex = contenedorIngredientes.querySelectorAll('.item-ingrediente-bloque').length + 1;
@@ -263,22 +348,36 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    // Botón para quitar la última fila (-): No permite borrar si quedan 2 o menos
     if (btnQuitarIngrediente) {
         btnQuitarIngrediente.addEventListener('click', () => {
             const items = contenedorIngredientes.querySelectorAll('.item-ingrediente-bloque');
-            if (items.length > 1) {
+            if (items.length > 2) {
                 contenedorIngredientes.removeChild(items[items.length - 1]);
             }
         });
     }
 
-    // Submit (Actualizar Plato)
+    if (inputFoto) {
+        inputFoto.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => imgPreview.src = event.target.result;
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // ==========================================
+    // 5. ENVIAR FORMULARIO (UPDATE PLATO Y ESTADO)
+    // ==========================================
     if (formModificarPlato) {
         formModificarPlato.addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const formData = new FormData(formModificarPlato);
-            formData.append('estado', inputEstado && inputEstado.checked ? 'Activo' : 'Inactivo');
+            formData.set('estado', inputEstado && inputEstado.checked ? 'Activo' : 'Inactivo');
 
             try {
                 const res = await fetch(`/api/platos/${id_plato}`, {
@@ -289,19 +388,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const resultado = await res.json();
 
                 if (res.ok && resultado.status === 'success') {
-                    alert('Plato modificado con éxito.');
                     window.location.href = '/platos_menu';
                 } else {
                     alert('Error: ' + (resultado.message || 'No se pudo actualizar el plato.'));
                 }
             } catch (err) {
-                console.error('Error de red/servidor:', err);
+                console.error('Error al guardar cambios:', err);
                 alert('No se pudo conectar con el servidor.');
             }
         });
     }
 
-    await cargarCatalogoIngredientes();
+    await cargarIngredientesDesdeDB();
     await cargarPlato();
     await cargarIngredientesPlato();
 });
