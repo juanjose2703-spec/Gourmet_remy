@@ -739,8 +739,8 @@ textarea.input-redondeado {
 .superficie-contenido {
     background-color: var(--gris);
     width: 100%;
-    max-width: 400px;
-    max-height: 75vh;
+    max-width: 320px;
+    max-height: 60vh;
     border-radius: 15px;
     padding: 22px 18px;
     display: flex;
@@ -832,8 +832,8 @@ textarea.input-redondeado {
 /* RESPONSIVE PANTALLAS GRANDES */
 @media screen and (min-width: 700px) {
     .superficie-contenido {
-        max-width: 520px;
-        max-height: 80vh;
+        max-width: 320px;
+        max-height: 60vh;
         padding: 28px 22px;
     }
 
