@@ -95,6 +95,7 @@ header#cabezote_seccion_ppal {
     width: 26px;
     height: 26px;
     cursor: pointer;
+    visibility: hidden;
 }
 
 #titulo_vista_ppal {

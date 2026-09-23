@@ -81,6 +81,7 @@ svg#btn_menu_movil_form {
     color: var(--blanco);
     fill: currentColor;
     display: block;
+    visibility: hidden;
 }
 
 #titulo_vista_form {

@@ -53,6 +53,7 @@ svg#btn_menu_movil_form {
     color: var(--blanco);
     fill: currentColor;
     display: block;
+    visibility: hidden;
 }
 
 header#cabezote_modal h2#titulo_ppal {

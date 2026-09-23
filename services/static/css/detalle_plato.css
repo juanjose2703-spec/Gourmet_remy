@@ -78,6 +78,7 @@ header#cabecera_detalle_plato .contenido-cabecera {
     width: 26px;
     height: 26px;
     cursor: pointer;
+    visibility: hidden;
 }
 
 #titulo_vista_detalle {
