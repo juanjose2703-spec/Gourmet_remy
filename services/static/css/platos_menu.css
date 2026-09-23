@@ -76,35 +76,36 @@ main#gran_cont_ppal {
     overflow: hidden;
 }
 
-/* --- Menú Lateral General / Móvil --- */
+/* --- Menú Lateral General / Móvil (Tarjeta Flotante Desplegable) --- */
 aside#barra_lateral_nav {
     display: flex;
-    position: fixed;
-    top: 0;
-    left: -100%;
-    width: 45vw;
-    height: 55vh;
-    background-color: var(--blanco);
+    position: absolute;
+    top: 68px; /* Posicionado debajo del header */
+    left: -280px; /* Oculto a la izquierda respetando ancho y sombra */
+    width: 250px; /* Ancho solicitado */
+    height: auto;
+    background-color: var(--gris);
     z-index: 1000;
     flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.5rem 0;
-    box-shadow: 4px 0px 12px rgba(0, 0, 0, 0.25);
-    border-radius: 0 0 16px 0;
+    justify-content: flex-start;
+    align-items: stretch;
+    padding: 1rem 0.8rem;
+    box-shadow: -10px 10px 17px rgba(6, 6, 6, 0.5);
+    border-radius: 10px;
     transition: left 0.3s ease-in-out;
 }
 
 aside#barra_lateral_nav.menu-movil-abierto {
-    left: 0;
+    left: 12px; /* Margen respecto al borde izquierdo */
 }
 
 aside#barra_lateral_nav figure#marca_remy_lat {
-    margin: 0;
-    width: 45px;
+    margin: 0 0 1rem 0;
+    width: 50px;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
+    padding-left: 11px;
 }
 
 aside#barra_lateral_nav figure#marca_remy_lat img {
@@ -115,35 +116,61 @@ aside#barra_lateral_nav figure#marca_remy_lat img {
 aside#barra_lateral_nav nav#menu_iconos_lat {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
+    align-items: stretch;
+    gap: 0.4rem;
+    width: 100%;
 }
 
 aside#barra_lateral_nav nav#menu_iconos_lat .btn-ico-lat {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     width: 100%;
+    padding: 11px;
+    border-radius: 8px;
     color: var(--negro);
     cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+aside#barra_lateral_nav nav#menu_iconos_lat .btn-ico-lat:hover {
+    background-color: var(--verde);
+    color: var(--blanco);
 }
 
 aside#barra_lateral_nav nav#menu_iconos_lat .btn-ico-lat svg {
-    width: 22px;
-    height: 22px;
+    width: 28px;
+    height: 28px;
+    margin-right: 17px;
+    flex-shrink: 0;
+}
+
+aside#barra_lateral_nav nav#menu_iconos_lat .btn-ico-lat .txt-opc-movil {
+    display: inline-block;
+    font-size: 0.95rem;
+    line-height: 1.1;
+}
+
+aside#barra_lateral_nav nav#menu_iconos_lat .btn-ico-lat:hover svg,
+aside#barra_lateral_nav nav#menu_iconos_lat .btn-ico-lat:focus svg {
+    color: var(--blanco);
+    fill: var(--negro);
 }
 
 aside#barra_lateral_nav nav#menu_iconos_lat .btn-ico-lat.activo {
-    color: var(--verde);
     position: relative;
 }
 
 figure#ico_codigo {
-    width: 22px;
+    width: 24px;
 }
 
 #firma_codigo_lat {
     color: var(--negro);
+    margin-top: 1rem;
+    padding-left: 11px;
+    display: none;
+    justify-content: flex-start;
 }
 
 section#cont_derecho_contenido {
@@ -235,14 +262,13 @@ div#cont_acciones_pestanas {
     background: none;
     border: none;
     font-weight: 700;
-    font-size: 0.95rem;
     cursor: pointer;
     padding: 0;
     color: var(--negro);
 }
 
 .btn-pestana.activa {
-    color: var(--verde) !important;
+    color: var(--verde);
     border-bottom: none;
 }
 
@@ -282,7 +308,7 @@ div#cont_acciones_pestanas {
 }
 
 .oculto-movil {
-    display: none !important;
+    display: none;
 }
 
 .lista-tarjetas-grid {
@@ -464,11 +490,11 @@ div#cont_acciones_pestanas {
     }
 
     #btn_cerrar_vista {
-        display: none !important;
+        display: none;
     }
 
     nav#nav_pestanas_ppal {
-        display: flex !important;
+        display: flex;
     }
 
     #titulo_vista_ppal {
@@ -592,11 +618,15 @@ div#cont_acciones_pestanas {
     }
 }
 
+/* ==========================================================================
+   Vista Escritorio / PC (1020px en adelante) -> Se mantiene intacta
+   ========================================================================== */
 @media screen and (min-width: 1020px) {
 
     aside#barra_lateral_nav {
         position: static;
         left: 0;
+        top: 0;
         background: var(--blanco);
         display: flex;
         flex-direction: column;
@@ -615,16 +645,50 @@ div#cont_acciones_pestanas {
     }
 
     aside#barra_lateral_nav figure#marca_remy_lat {
+        margin: 0;
         width: 55px;
+        padding-left: 0;
+        justify-content: center;
     }
 
     aside#barra_lateral_nav nav#menu_iconos_lat {
         gap: 1.8rem;
+        align-items: center;
+    }
+
+    aside#barra_lateral_nav nav#menu_iconos_lat .btn-ico-lat {
+        justify-content: center;
+        padding: 0;
+        border-radius: 0;
+    }
+
+    /* OCULTAR TEXTO EN VISTA DE ESCRITORIO PC */
+    aside#barra_lateral_nav nav#menu_iconos_lat .btn-ico-lat .txt-opc-movil {
+        display: none !important;
+    }
+
+    aside#barra_lateral_nav nav#menu_iconos_lat .btn-ico-lat:hover,
+    aside#barra_lateral_nav nav#menu_iconos_lat .btn-ico-lat:focus {
+        background: transparent;
+        color: var(--verde);
     }
 
     aside#barra_lateral_nav nav#menu_iconos_lat .btn-ico-lat svg {
         width: 24px;
         height: 24px;
+        margin-right: 0;
+    }
+
+    aside#barra_lateral_nav nav#menu_iconos_lat .btn-ico-lat:hover svg,
+    aside#barra_lateral_nav nav#menu_iconos_lat .btn-ico-lat:focus svg {
+        color: var(--verde);
+    }
+
+    #firma_codigo_lat {
+        margin-top: 0;
+        padding-left: 0;
+        justify-content: center;
+        display: flex;
     }
 
     figure#ico_codigo {
@@ -639,11 +703,11 @@ div#cont_acciones_pestanas {
 
     #btn_menu_movil, 
     nav#nav_pestanas_ppal {
-        display: none !important;
+        display: none;
     }
 
     #btn_cerrar_vista {
-        display: flex !important;
+        display: flex;
     }
 
     #titulo_vista_ppal {
@@ -658,7 +722,7 @@ div#cont_acciones_pestanas {
     }
 
     .columna-vista {
-        display: flex !important;
+        display: flex;
         flex-direction: column;
         padding: 0 1rem 1rem 1rem;
         height: 100%;
@@ -763,65 +827,65 @@ div#cont_acciones_pestanas {
 @media screen and (max-width: 1019px) {
 
     #btn_cerrar_vista {
-        display: none !important;
+        display: none;
     }
 
     #cont_acciones_pestanas {
-        min-width: 40px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: flex-end !important;
-        flex-shrink: 0 !important;
+        min-width: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        flex-shrink: 0;
     }
 
     #btn_buscar_pesta {
-        display: flex !important;
-        width: 36px !important;
-        height: 36px !important;
-        align-items: center !important;
-        justify-content: center !important;
-        flex-shrink: 0 !important;
-        opacity: 1 !important;
-        visibility: visible !important;
+        display: flex;
+        width: 36px;
+        height: 36px;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        opacity: 1;
+        visibility: visible;
     }
 
     #btn_buscar_pesta svg {
-        width: 22px !important;
-        height: 22px !important;
-        fill: currentColor !important;
-        display: block !important;
-        flex-shrink: 0 !important;
+        width: 22px;
+        height: 22px;
+        fill: currentColor;
+        display: block;
+        flex-shrink: 0;
     }
 
     #btn_flotante_platos,
     #btn_flotante_menu {
-        position: fixed !important;
-        bottom: 24px !important;
-        right: 18px !important;
-        left: auto !important;
-        top: auto !important;
-        width: 52px !important;
-        height: 52px !important;
-        border-radius: 50% !important;
-        display: flex !important;
-        justify-content: center !important;
-        align-items: center !important;
-        z-index: 9999 !important;
-        padding: 0 !important;
-        transform: none !important;
+        position: fixed;
+        bottom: 24px;
+        right: 18px;
+        left: auto;
+        top: auto;
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        padding: 0;
+        transform: none;
     }
 
     #btn_flotante_platos svg,
     #btn_flotante_menu svg {
-        width: 26px !important;
-        height: 26px !important;
-        display: block !important;
-        fill: currentColor !important;
-        flex-shrink: 0 !important;
+        width: 26px;
+        height: 26px;
+        display: block;
+        fill: currentColor;
+        flex-shrink: 0;
     }
 
     #btn_flotante_platos .texto-btn-pc,
     #btn_flotante_menu .texto-btn-pc {
-        display: none !important;
+        display: none;
     }
 }
