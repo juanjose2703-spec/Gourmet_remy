@@ -1,17 +1,17 @@
 @font-face {
     font-family: 'sena-calibri';
-    src: url('../rm_componentes/calibri.eot');
-    src: url('../rm_componentes/calibri.eot') format('embedded-opentype'),
-        url('../rm_componentes/calibri.ttf') format('truetype');
+    src: url('/services/rm_componentes/calibri.eot');
+    src: url('/services/rm_componentes/calibri.eot') format('embedded-opentype'),
+         url('/services/rm_componentes/calibri.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'sena-worksans';
-    src: url('../rm_componentes/worksans.eot');
-    src: url('../rm_componentes/worksans.eot') format('embedded-opentype'),
-        url('../rm_componentes/worksans.ttf') format('truetype');
+    src: url('/services/rm_componentes/worksans.eot');
+    src: url('/services/rm_componentes/worksans.eot') format('embedded-opentype'),
+         url('/services/rm_componentes/worksans.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
