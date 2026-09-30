@@ -6,6 +6,7 @@
     <title>Modificar Plato | REMY 1.0</title>
     <link rel="stylesheet" href="../../../static/css/normalize.css">
     <link rel="stylesheet" href="../../platos/static/css/modificar_plato.css">
+    <script src="/platos/static/js/compresor_imagen.js"></script>
 </head>
 <body id="cuerpo_modificar_plato">
 
@@ -99,21 +100,21 @@
             </div>
         </dialog>
 
-       <!-- MODAL DE INGREDIENTES -->
-<div id="superficie_modal_ingredientes" class="superficie-overlay oculto">
-    <div class="superficie-contenido">
-        <div class="header-superficie">
-            <h2 id="titulo_superficie_ing">Seleccionar Ingrediente</h2>
-            <div class="cont-buscador">
-                <input type="text" id="input_buscar_ingrediente" placeholder="Buscar ingrediente..." autocomplete="off">
-                <svg class="ico-buscar" viewBox="0 0 256 256" fill="currentColor">
-                    <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/>
-                </svg>
+            <!-- MODAL DE INGREDIENTES -->
+        <div id="superficie_modal_ingredientes" class="superficie-overlay oculto">
+            <div class="superficie-contenido">
+                <div class="header-superficie">
+                    <h2 id="titulo_superficie_ing">Seleccionar Ingrediente</h2>
+                    <div class="cont-buscador">
+                        <input type="text" id="input_buscar_ingrediente" placeholder="Buscar ingrediente..." autocomplete="off">
+                        <svg class="ico-buscar" viewBox="0 0 256 256" fill="currentColor">
+                            <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="lista-platos" id="lista_ingredientes"></div>
             </div>
         </div>
-        <div class="lista-platos" id="lista_ingredientes"></div>
-    </div>
-</div>
 
     </main>
 

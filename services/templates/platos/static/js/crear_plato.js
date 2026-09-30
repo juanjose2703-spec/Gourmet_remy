@@ -205,9 +205,14 @@ document.addEventListener('DOMContentLoaded', () => {
         crearBloqueIngrediente(); // Ingrediente 2
     }
 
-    // Evento para el botón Agregar (+)
+    // Evento para el botón Agregar (+): Límite máximo de 38 ingredientes
     if (btnAgregarIngrediente) {
         btnAgregarIngrediente.addEventListener('click', () => {
+            const totalActual = contenedorIngredientes.querySelectorAll('.item-ingrediente-bloque').length;
+            if (totalActual >= 38) {
+                alert('El límite máximo es de 38 ingredientes por plato.');
+                return;
+            }
             crearBloqueIngrediente();
         });
     }
@@ -218,6 +223,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const items = contenedorIngredientes.querySelectorAll('.item-ingrediente-bloque');
             if (items.length > 2) {
                 contenedorIngredientes.removeChild(items[items.length - 1]);
+            } else {
+                alert('El plato debe tener como mínimo 2 ingredientes.');
             }
         });
     }
@@ -266,11 +273,69 @@ document.addEventListener('DOMContentLoaded', () => {
         btnCerrarModalCat.addEventListener('click', () => modalCategoria.close());
     }
 
+    // ==========================================
+    // FUNCIÓN DE VALIDACIÓN DE INGREDIENTES
+    // ==========================================
+    function validarIngredientes() {
+        if (!contenedorIngredientes) return false;
+
+        const bloques = contenedorIngredientes.querySelectorAll('.item-ingrediente-bloque');
+        const total = bloques.length;
+
+        // 1. Validar mínimo 2 y máximo 38
+        if (total < 2) {
+            alert('Debes agregar como mínimo 2 ingredientes.');
+            return false;
+        }
+
+        if (total > 38) {
+            alert('No puedes agregar más de 38 ingredientes por plato.');
+            return false;
+        }
+
+        // 2. Validar que cada ingrediente tenga nombre/ID y cantidad válida
+        for (let i = 0; i < total; i++) {
+            const bloque = bloques[i];
+            const inputNombre = bloque.querySelector('.input-ingrediente-nombre');
+            const inputCantidad = bloque.querySelector('.input-cantidad');
+
+            const nombreVal = inputNombre ? inputNombre.value.trim() : '';
+            const cantidadVal = inputCantidad ? inputCantidad.value.trim() : '';
+
+            if (nombreVal === '') {
+                alert(`Por favor, selecciona un ingrediente para la posición ${i + 1}.`);
+                if (inputNombre) inputNombre.focus();
+                return false;
+            }
+
+            if (cantidadVal === '' || isNaN(cantidadVal) || parseFloat(cantidadVal) <= 0) {
+                alert(`Por favor, ingresa una cantidad válida y mayor a 0 para el Ingrediente ${i + 1} (${nombreVal}).`);
+                if (inputCantidad) inputCantidad.focus();
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     // Enviar formulario
     if (formAnadirPlato) {
         formAnadirPlato.addEventListener('submit', async (e) => {
             e.preventDefault();
+
+            // Validación estricta de ingredientes antes de continuar
+            if (!validarIngredientes()) {
+                return;
+            }
+
             const formData = new FormData(formAnadirPlato);
+
+            // Reducción de imagen si está presente en el input
+            if (inputFoto && inputFoto.files && inputFoto.files[0]) {
+                const fotoOriginal = inputFoto.files[0];
+                const fotoComprimida = await procesarYReducirImagen(fotoOriginal);
+                formData.set('imagen', fotoComprimida, fotoComprimida.name);
+            }
 
             try {
                 const response = await fetch('/api/platos/insertar', {
